@@ -7,7 +7,7 @@ import {Link, usePathname} from "@/src/shared/lib/i18n/navigation";
 import { useTransition, useEffect, useCallback } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import Image from "next/image";
-import {useUser} from "@auth0/nextjs-auth0";
+import {useUser} from "@auth0/nextjs-auth0/client";
 import {IconChevronDown} from "@tabler/icons-react";
 
 const locales = [
@@ -57,7 +57,15 @@ export default function NavBar() {
         </Button>
     );
 
-    const userMenu = user && (
+    const authButtons = (
+        <a href={`/auth/login?ui_locales=${locale}`} style={{ textDecoration: "none" }}>
+            <Button variant="filled" color="blue.8" radius="xl">
+                {t("login")}
+            </Button>
+        </a>
+    );
+
+    const userMenu = (
         <Menu shadow="md" width={200} withinPortal={false}>
             <Menu.Target>
                 <Button
@@ -65,7 +73,7 @@ export default function NavBar() {
                     radius="xl"
                     rightSection={<IconChevronDown size={16} />}
                 >
-                    {user.nickname || user.name || "User"}
+                    {user?.nickname || user?.name || "User"}
                 </Button>
             </Menu.Target>
 
@@ -101,15 +109,7 @@ export default function NavBar() {
 
                         <Group gap="xs" visibleFrom="md">
                             {languageButton}
-                            { user ?
-                                userMenu
-                                :
-                                <a href={`/auth/login?ui_locales=${locale}`} style={{ textDecoration: "none" }}>
-                                    <Button variant="filled" color="blue.8" radius="xl">
-                                        {t("login")}
-                                    </Button>
-                                </a>
-                            }
+                            {user ? userMenu : authButtons}
                         </Group>
 
                         <Burger
@@ -142,15 +142,7 @@ export default function NavBar() {
 
                     <Stack px="md" gap="sm" pb="xl">
                         {languageButton}
-                        { user ?
-                            userMenu
-                            :
-                            <a href={`/auth/login?ui_locales=${locale}`} style={{ textDecoration: "none" }}>
-                                <Button variant="filled" color="blue.8" radius="xl">
-                                    {t("login")}
-                                </Button>
-                            </a>
-                        }
+                        {user ? userMenu : authButtons}
                     </Stack>
                 </ScrollArea>
             </Drawer>

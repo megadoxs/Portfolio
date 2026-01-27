@@ -6,12 +6,13 @@ import {getMessages, getTranslations} from "next-intl/server";
 import {Auth0Provider} from "@auth0/nextjs-auth0";
 import {auth0} from "@/shared/api/auth0/auth0";
 import NavBar from "@/widgets/NavBar/navbar";
+import {Metadata} from "next";
 
 export async function generateMetadata({
                                            params,
                                        }: {
     params: Promise<{ locale: string }>;
-}) {
+}): Promise<Metadata> {
     const {locale} = await params;
     const t = await getTranslations({locale, namespace: "metadata"});
 
@@ -30,6 +31,7 @@ export default async function RootLayout({
 }) {
     const {locale} = await params;
     const messages = await getMessages({locale});
+    const t = await getTranslations({locale, namespace: "metadata"});
 
     const session = await auth0.getSession();
     const user = session?.user;
@@ -46,7 +48,7 @@ export default async function RootLayout({
                     name="viewport"
                     content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
                 />
-                <title>Portfolio</title>
+                <title>{t("title")}</title>
             </head>
             <body
                 style={{minHeight: "100vh", display: "flex", flexDirection: "column"}}>
