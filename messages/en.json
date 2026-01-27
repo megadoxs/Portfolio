@@ -1,0 +1,15 @@
+{
+  "metadata": {
+    "title": "Portfolio",
+    "description": "Louis Caron's Portfolio"
+  },
+  "navbar": {
+    "login": "Login",
+    "logout": "Logout",
+    "dashboard": "Dashboard"
+  },
+  "home": {
+    "title": "Full Stack Developer",
+    "slogan": "Building quality software that lasts."
+  }
+}
