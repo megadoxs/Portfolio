@@ -1,17 +1,16 @@
 import { Pill, Group } from "@mantine/core";
 import {SkillIcon} from "@/shared/ui/SkillIcon";
+import {Skill} from "@/entities/skill";
 
 interface SkillPillProps {
-    skill: string;
-    onRemove?: (skill: string) => void;
-    withIcon?: boolean;
+    skill: Skill;
+    onRemove?: (skill: Skill) => void;
     size?: "xs" | "sm" | "md" | "lg" | "xl";
 }
 
 export const SkillPill = ({
                               skill,
                               onRemove,
-                              withIcon = true,
                               size = "lg"
                           }: SkillPillProps) => {
     return (
@@ -21,8 +20,7 @@ export const SkillPill = ({
             size={size}
         >
             <Group gap={6} wrap="nowrap">
-                {withIcon && <SkillIcon skillName={skill} size={16} />}
-                <span>{skill}</span>
+                <SkillIcon skill={skill} size={16}/>
             </Group>
         </Pill>
     );

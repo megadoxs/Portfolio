@@ -32,18 +32,20 @@ export const SkillIcon = ({
         return `https://skillicons.dev/icons?i=${normalized}`;
     };
 
-    return (
-        <Image
-            src={skill.image ? skill.image : getSkillIconUrl(skillName)}
-            alt={alt || skill.name}
-            style={{
-                width: size,
-                height: size,
-                objectFit: 'contain'
-            }}
-            onError={(e) => {
-                e.currentTarget.style.display = 'none';
-            }}
-        />
+    return ( //TODO finish implement
+        // <Image
+        //     src={skill.image ? skill.image : getSkillIconUrl(skillName)}
+        //     alt={alt || skill.name}
+        //     style={{
+        //         width: size,
+        //         height: size,
+        //         objectFit: 'contain'
+        //     }}
+        //     onError={(e) => {
+        //         e.currentTarget.style.display = 'none';
+        //     }}
+        // />
+        <>
+        </>
     );
 };

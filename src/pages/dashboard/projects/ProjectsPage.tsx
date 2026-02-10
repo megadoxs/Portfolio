@@ -9,7 +9,15 @@ import ProjectCard from "@/shared/ui/ProjectCard";
 import AddProjectModal from "./ui/AddProjectModal";
 import EmptyState from "@/shared/ui/EmptyState";
 import ConfirmModal from "@/shared/ui/ConfirmModal";
-import {addProject, deleteProject, Project, ProjectRequestModel, updateProject, getAllProjects} from "@/entities/project";
+import {
+    addProject,
+    deleteProject,
+    Project,
+    ProjectRequestModel,
+    updateProject,
+    getAllProjects,
+    ProjectWithSkills
+} from "@/entities/project";
 
 export default function ProjectsPage() {
     const t = useTranslations("projects");
@@ -17,7 +25,7 @@ export default function ProjectsPage() {
     const [modalOpen, setModalOpen] = useState(false);
     const [editingProject, setEditingProject] = useState<Project | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<Project | null>(null);
-    const [projects, setProjects] = useState<Project[]>([]);
+    const [projects, setProjects] = useState<ProjectWithSkills[]>([]);
     const [isFetching, setIsFetching] = useState(true);
     const [isCreating, setIsCreating] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);

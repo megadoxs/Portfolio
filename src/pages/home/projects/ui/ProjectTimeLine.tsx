@@ -2,12 +2,12 @@
 
 import { Stack, Text, Box } from "@mantine/core";
 import { IconCircleFilled } from "@tabler/icons-react";
-import { Project } from "@/entities/project";
+import {ProjectWithSkills} from "@/entities/project";
 import { useTranslations } from "next-intl";
 import ProjectCard from "@/shared/ui/ProjectCard";
 
 interface ProjectTimelineProps {
-    projects: Project[];
+    projects: ProjectWithSkills[];
 }
 
 export default function ProjectTimeline({ projects }: ProjectTimelineProps) {
