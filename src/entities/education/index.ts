@@ -1,0 +1,5 @@
+export type { Education, EducationRequestModel } from './model/education'
+export { addEducation } from './api/addEducation'
+export { getAllEducation } from './api/getAllEducations'
+export { updateEducation } from './api/updateEducation'
+export { deleteEducation } from './api/deleteEducation'

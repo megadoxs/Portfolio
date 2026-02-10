@@ -1,0 +1,1 @@
+export { HobbiesPage as default } from "@/pages/dashboard"

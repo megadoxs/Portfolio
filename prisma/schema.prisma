@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Contact {
+  id        String      @id     @default("CONTACT_SINGLETON")
+  email     String
+  github    String
+  linkedin  String
+}
+
+model Education {
+  id            String      @id     @default(cuid())
+  institution   String
+  degree        String?
+  fieldOfStudy  String?
+  iconType      String
+  startDate     DateTime
+  endDate       DateTime
+}
+
+model Hobby {
+  id        String      @id     @default(cuid())
+  name      String
+  picture   String
+
+  @@map("hobbies")
+}
+
+enum ProjectStatus {
+  ACTIVE
+  INACTIVE
+  COMPLETED
+}
+
+model Project {
+  id            String      @id     @default(cuid())
+  title         String
+  description   String
+  status        ProjectStatus
+  githubUrl     String      @unique
+  active        Boolean
+  startDate     DateTime    @db.Date
+  endDate       DateTime?   @db.Date
+  skills        Skill[]
+
+  @@map("projects")
+}
+
+model Resume {
+  id        String      @id     @default(cuid())
+  name      String
+  locale    String
+  url       String      @unique
+  active    Boolean     @default(true)
+  createdAt DateTime    @default(now())
+
+  @@map("resumes")
+}
+
+model Skill {
+  id        String      @id     @default(cuid())
+  name      String      @unique
+  projects  Project[]
+
+  @@map("skills")
+}
+
+model Testimonial {
+  id            String      @id     @default(cuid())
+  name          String
+  testimonial   String
+  status        String
+
+  @@map("testimonials")
+}
+
+model Work {
+  id        String      @id     @default(cuid())
+  company   String
+  position  String
+  startDate DateTime
+  endDate   DateTime?
+
+  @@map("works")
+}

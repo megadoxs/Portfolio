@@ -2,7 +2,8 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+    output: 'standalone',
+    serverExternalPackages: ['@prisma/client', 'prisma']
 };
 
 const withNextIntl = createNextIntlPlugin("./src/shared/lib/i18n/request.ts");

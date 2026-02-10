@@ -6,6 +6,21 @@ export const routing = defineRouting({
   pathnames: {
     '/': '/',
 
+    '/projects': {
+      en: '/projects',
+      fr: '/projets'
+    },
+
+    '/about': {
+      en: '/about',
+      fr: '/a-propos'
+    },
+
+    '/contact': {
+      en: '/contact',
+      fr: '/contact'
+    },
+
     '/dashboard': {
       en: '/dashboard',
       fr: '/tableau-de-bord'

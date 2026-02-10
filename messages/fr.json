@@ -3,13 +3,252 @@
     "title": "Portfolio",
     "description": "Louis Caron's Portfolio"
   },
+  "language": {
+    "english": "Anglais",
+    "french": "Français"
+  },
   "navbar": {
-    "login": "Connexion",
-    "logout": "Déconnexion",
-    "dashboard": "Tableau de bord"
+    "home": "Accueil",
+    "projects": "Projets",
+    "about": "À propos",
+    "contact": "Contact",
+    "resume": "CV"
   },
   "home": {
     "title": "Développeur Full Stack",
     "slogan": "Créer des logiciels de qualité qui durent."
+  },
+  "sidebar": {
+    "dashboard": "Tableau de bord",
+    "overview": "Vue d'ensemble",
+    "education": "Éducation",
+    "work": "Expérience professionnelle",
+    "projects": "Projets",
+    "skills": "Compétences",
+    "hobbies": "Loisirs",
+    "testimonials": "Témoignages",
+    "resume": "Curriculum vitae",
+    "contact": "Contact",
+    "account": "Compte",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "logout": "Déconnexion"
+  },
+  "education": {
+    "title": "Éducation",
+    "addButton": "Ajouter une formation",
+    "editButton": "Modifier",
+    "deleteButton": "Supprimer",
+    "saveButton": "Enregistrer",
+    "updateButton": "Mettre à jour",
+    "cancelButton": "Annuler",
+    "emptyTitle": "Aucune formation enregistrée",
+    "emptyDesc": "Commencez à construire votre parcours éducatif en ajoutant votre première formation",
+    "deleteTitle": "Supprimer la formation",
+    "deleteMessage": "Êtes-vous sûr de vouloir supprimer cette formation ? Cette action est irréversible.",
+    "addTitle": "Ajouter une formation",
+    "editTitle": "Modifier la formation",
+    "institutionLabel": "Institution",
+    "institutionPlaceholder": "ex: Université de Montréal",
+    "institutionRequired": "L'institution est requise",
+    "degreeLabel": "Diplôme",
+    "degreePlaceholder": "ex: Baccalauréat en sciences",
+    "fieldOfStudyLabel": "Domaine d'études",
+    "fieldOfStudyPlaceholder": "ex: Informatique",
+    "startDateLabel": "Date de début",
+    "startDatePlaceholder": "Sélectionner la date de début",
+    "startDateRequired": "La date de début est requise",
+    "endDateLabel": "Date de fin",
+    "endDatePlaceholder": "Sélectionner la date de fin",
+    "endDateRequired": "La date de fin est requise",
+    "endDateBeforeStart": "La date de fin doit être après la date de début",
+    "iconLabel": "Niveau d'études",
+    "iconPlaceholder": "Sélectionner le niveau d'études",
+    "iconRequired": "Le niveau d'études est requis",
+    "iconUniversity": "Université",
+    "iconCollege": "Collège",
+    "iconSchool": "École"
+  },
+  "work": {
+    "title": "Expérience professionnelle",
+    "addButton": "Ajouter une expérience",
+    "emptyTitle": "Aucune expérience professionnelle",
+    "emptyDesc": "Ajoutez votre première expérience professionnelle pour commencer",
+    "modalTitleAdd": "Ajouter une expérience professionnelle",
+    "modalTitleEdit": "Modifier l'expérience professionnelle",
+    "companyLabel": "Entreprise",
+    "companyPlaceholder": "Entrez le nom de l'entreprise",
+    "positionLabel": "Poste",
+    "positionPlaceholder": "Entrez le titre du poste",
+    "startDateLabel": "Date de début",
+    "startDatePlaceholder": "Sélectionnez la date de début",
+    "endDateLabel": "Date de fin",
+    "endDatePlaceholder": "Sélectionnez la date de fin (optionnel)",
+    "endDateDescription": "Laissez vide s'il s'agit de votre poste actuel",
+    "cancelButton": "Annuler",
+    "submitButton": "Ajouter l'expérience",
+    "updateButton": "Mettre à jour l'expérience",
+    "current": "Actuel",
+    "present": "Présent",
+    "update": "Modifier",
+    "delete": "Supprimer",
+    "deleteTitle": "Supprimer l'expérience professionnelle",
+    "deleteMessage": "Êtes-vous sûr de vouloir supprimer cette expérience professionnelle ? Cette action est irréversible."
+  },
+  "projects": {
+    "title": "Projets",
+    "subtitle": "Gérez et présentez vos travaux",
+    "addButton": "Ajouter un projet",
+    "emptyTitle": "Aucun projet pour le moment",
+    "emptyDesc": "Ajoutez votre premier projet pour commencer.",
+    "deleteTitle": "Supprimer le projet",
+    "deleteMessage": "Cela supprimera définitivement",
+    "ProjectCard": {
+      "present": "Présent",
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    },
+    "addProjectModal": {
+      "title": "Nouveau projet",
+      "steps": {
+        "repository": {
+          "label": "Dépôt",
+          "description": "URL GitHub"
+        },
+        "details": {
+          "label": "Détails",
+          "description": "Titre et description"
+        },
+        "skills": {
+          "label": "Compétences",
+          "description": "Technologies"
+        },
+        "settings": {
+          "label": "Paramètres",
+          "description": "Dates et statut"
+        }
+      },
+      "fields": {
+        "githubUrl": {
+          "label": "URL du dépôt GitHub",
+          "placeholder": "https://github.com/utilisateur/depot",
+          "suggestions": "Suggestions de votre compte GitHub ({count} dépôts trouvés)"
+        },
+        "title": {
+          "label": "Titre",
+          "placeholder": "Mon projet génial"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Une courte description du projet"
+        },
+        "skills": {
+          "label": "Compétences et technologies",
+          "placeholder": "Rechercher ou saisir le nom de la compétence",
+          "hint": "Les langages détectés dans votre dépôt sont présélectionnés. Ajoutez ou retirez au besoin.",
+          "selected": "Compétences sélectionnées ({count})"
+        },
+        "startDate": {
+          "label": "Date de début",
+          "placeholder": "Choisir une date"
+        },
+        "endDate": {
+          "label": "Date de fin",
+          "placeholder": "Laisser vide pour en cours",
+          "placeholderCompleted": "Requis pour les projets terminés"
+        },
+        "status": {
+          "label": "Statut",
+          "placeholder": "Sélectionner le statut du projet"
+        },
+        "active": {
+          "label": "Actif",
+          "descriptionActive": "Ce projet est affiché sur votre portfolio",
+          "descriptionInactive": "Ce projet est masqué de votre portfolio"
+        }
+      },
+      "status": {
+        "active": "Actif",
+        "inactive": "Inactif",
+        "completed": "Terminé"
+      },
+      "buttons": {
+        "cancel": "Annuler",
+        "next": "Suivant",
+        "back": "Retour",
+        "create": "Créer le projet",
+        "createSkill": "Créer une compétence"
+      },
+      "validation": {
+        "titleRequired": "Le titre est requis",
+        "descriptionRequired": "La description est requise",
+        "githubUrlRequired": "L'URL GitHub est requise",
+        "validGithubUrl": "Veuillez entrer une URL GitHub valide",
+        "validRepoUrl": "Veuillez entrer une URL de dépôt GitHub valide (github.com/utilisateur/depot)",
+        "validUrl": "Veuillez entrer une URL valide",
+        "startDateRequired": "La date de début est requise",
+        "endDateRequiredCompleted": "La date de fin est requise pour les projets terminés",
+        "endDateBeforeStart": "La date de fin ne peut pas être avant la date de début",
+        "invalidRepoUrl": "URL de dépôt GitHub invalide",
+        "repoNotFound": "Dépôt introuvable ou privé",
+        "rateLimitExceeded": "Limite de requêtes API GitHub dépassée. Veuillez réessayer plus tard",
+        "unableToVerify": "Impossible de vérifier le dépôt. Veuillez vérifier l'URL"
+      },
+      "messages": {
+        "repoDetailsLoaded": "Détails du dépôt chargés depuis {repo}",
+        "languagesDetected": "{count} langage{count, plural, one {} other {s}} détecté{count, plural, one {} other {s}} dans le dépôt"
+      }
+    }
+  },
+  "hobbies": {
+    "title": "Loisirs",
+    "addButton": "Ajouter un loisir",
+    "emptyTitle": "Aucun loisir pour le moment",
+    "emptyDesc": "Commencez par ajouter votre premier loisir",
+    "deleteTitle": "Supprimer le loisir",
+    "deleteMessage": "Êtes-vous sûr de vouloir supprimer ce loisir ? Cette action est irréversible.",
+    "deleteButton": "Supprimer",
+    "modalTitle": "Ajouter un loisir",
+    "imageLabel": "Image",
+    "dropzoneText": "Glissez-déposez une image ici ou cliquez pour sélectionner",
+    "dropzoneHint": "L'image ne doit pas dépasser 5 Mo",
+    "zoom": "Zoom",
+    "changeImage": "Changer l'image",
+    "nameLabel": "Nom",
+    "namePlaceholder": "Entrez le nom du loisir",
+    "cancelButton": "Annuler",
+    "submitButton": "Ajouter"
+  },
+  "resumes": {
+    "title": "CV",
+    "addButton": "Ajouter un CV",
+    "emptyTitle": "Aucun CV pour le moment",
+    "emptyDesc": "Téléchargez votre premier CV pour commencer",
+    "deleteTitle": "Supprimer le CV",
+    "deleteMessage": "Êtes-vous sûr de vouloir supprimer ce CV?",
+    "modalTitle": "Télécharger un CV",
+    "localeLabel": "Langue",
+    "localePlaceholder": "Sélectionner la langue",
+    "fileLabel": "Fichier CV",
+    "dropzoneText": "Glissez le PDF ici ou cliquez pour sélectionner",
+    "dropzoneHint": "Fichier PDF uniquement, max 5MB",
+    "cancelButton": "Annuler",
+    "submitButton": "Télécharger",
+    "noEnglishResumes": "Aucun CV en anglais pour le moment",
+    "noFrenchResumes": "Aucun CV en français pour le moment",
+    "version": "Version",
+    "current": "Actif",
+    "archived": "Archivé",
+    "openResume": "Ouvrir le CV",
+    "delete": "Supprimer",
+    "activeLabel": "CV actif",
+    "activeDescription": "Ce CV sera utilisé lors du téléchargement de votre CV.",
+    "nameLabel": "Nom",
+    "namePlaceholder": "Entrez le nom du CV",
+    "activate": "Définir comme actif"
+  },
+  "confirmModal": {
+    "cancel": "Annuler",
+    "confirm": "Confirmer"
   }
 }

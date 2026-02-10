@@ -1,0 +1,6 @@
+export type { Resume, ResumeRequestModel } from './model/resume'
+export { addResume } from './api/addResume'
+export { getAllResumes } from './api/getAllResumes'
+export { deleteResume } from './api/deleteResume'
+export { getActiveResumeByLocale } from './api/getActiveResumeByLocale'
+export { activateResume } from './api/activateResume'
