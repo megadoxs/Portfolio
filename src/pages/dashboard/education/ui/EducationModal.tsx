@@ -1,14 +1,13 @@
 "use client";
 
 import { Modal, TextInput, Button, Stack, Group, Text, rem, Combobox, InputBase, useCombobox } from "@mantine/core";
-import {DateInput, DatePickerInput} from "@mantine/dates";
+import {DateInput} from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import {useLocale, useTranslations} from "next-intl";
 import {IconSchool, IconCertificate, IconBook, IconChevronDown, IconCalendar} from "@tabler/icons-react";
 import { Education, EducationRequestModel } from "@/entities/education";
 import { useEffect } from "react";
 import 'dayjs/locale/fr';
-import {ProjectStatus} from "@/entities/project/model/project";
 
 interface EducationModalProps {
     opened: boolean;
@@ -183,8 +182,8 @@ export default function EducationModal({ opened, onClose, onSubmit, isLoading, i
 
                     <Group grow align="flex-start">
                         <DateInput
-                            label={t("fields.startDate.label")}
-                            placeholder={t("fields.startDate.placeholder")}
+                            label={t("startDateLabel")}
+                            placeholder={t("startDatePlaceholder")}
                             radius="xl"
                             valueFormat={dateFormat}
                             leftSection={<IconCalendar size={16} stroke={1.5} />}
@@ -201,8 +200,8 @@ export default function EducationModal({ opened, onClose, onSubmit, isLoading, i
                         />
 
                         <DateInput
-                            label={t("fields.endDate.label")}
-                            placeholder={t("fields.endDate.placeholder")}
+                            label={t("endDateLabel")}
+                            placeholder={t("endDatePlaceholder")}
                             radius="xl"
                             valueFormat={dateFormat}
                             clearable

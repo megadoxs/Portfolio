@@ -1,6 +1,6 @@
 "use client";
 
-import {Button, Container, Grid, Group, Loader, Stack, Text} from "@mantine/core";
+import {Button, Container, Grid, Group, Loader, Stack, Text, useMantineColorScheme} from "@mantine/core";
 import {useState, useEffect} from "react";
 import {useTranslations} from "next-intl";
 import {IconCode, IconPlus} from "@tabler/icons-react";
@@ -21,6 +21,7 @@ import {
 
 export default function ProjectsPage() {
     const t = useTranslations("projects");
+    const { colorScheme } = useMantineColorScheme();
 
     const [modalOpen, setModalOpen] = useState(false);
     const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -30,6 +31,8 @@ export default function ProjectsPage() {
     const [isCreating, setIsCreating] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    const theme = colorScheme === 'dark' ? 'dark' : 'light';
 
     useEffect(() => {
         fetchProjects();
@@ -114,6 +117,7 @@ export default function ProjectsPage() {
                         radius="xl"
                         leftSection={<IconPlus size={14} stroke={2} />}
                         onClick={handleAdd}
+                        className={`glassButton ${theme}`}
                     >
                         {t("addButton")}
                     </Button>

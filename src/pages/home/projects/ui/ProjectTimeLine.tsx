@@ -3,7 +3,6 @@
 import { Stack, Text, Box } from "@mantine/core";
 import { IconCircleFilled } from "@tabler/icons-react";
 import {ProjectWithSkills} from "@/entities/project";
-import { useTranslations } from "next-intl";
 import ProjectCard from "@/shared/ui/ProjectCard";
 
 interface ProjectTimelineProps {
@@ -24,7 +23,7 @@ export default function ProjectTimeline({ projects }: ProjectTimelineProps) {
                     style={{ position: "relative", width: "100%", maxWidth: "1200px" }}
                     visibleFrom="md"
                 >
-                    {/* Center Line */}
+                    {/* Center Line - Glassmorphic gradient */}
                     <Box
                         style={{
                             position: "absolute",
@@ -32,9 +31,10 @@ export default function ProjectTimeline({ projects }: ProjectTimelineProps) {
                             top: 0,
                             bottom: 0,
                             width: "2px",
-                            backgroundColor: "var(--mantine-color-gray-3)",
+                            background: "linear-gradient(180deg, rgba(139, 92, 246, 0.4), rgba(59, 130, 246, 0.4), rgba(236, 72, 153, 0.3))",
                             transform: "translateX(-50%)",
                             zIndex: 0,
+                            boxShadow: "0 0 10px rgba(139, 92, 246, 0.3)",
                         }}
                     />
 
@@ -51,7 +51,7 @@ export default function ProjectTimeline({ projects }: ProjectTimelineProps) {
                                         minHeight: "200px",
                                     }}
                                 >
-                                    {/* Timeline Dot */}
+                                    {/* Timeline Dot - Enhanced glow effect */}
                                     <Box
                                         style={{
                                             position: "absolute",
@@ -61,13 +61,24 @@ export default function ProjectTimeline({ projects }: ProjectTimelineProps) {
                                             zIndex: 2,
                                         }}
                                     >
-                                        <IconCircleFilled
-                                            size={16}
-                                            color="var(--mantine-color-blue-6)"
-                                        />
+                                        <Box
+                                            style={{
+                                                position: "relative",
+                                                width: "16px",
+                                                height: "16px",
+                                            }}
+                                        >
+                                            <IconCircleFilled
+                                                size={16}
+                                                style={{
+                                                    color: "#8b5cf6",
+                                                    filter: "drop-shadow(0 0 6px rgba(139, 92, 246, 0.6))",
+                                                }}
+                                            />
+                                        </Box>
                                     </Box>
 
-                                    {/* Horizontal Line to Card */}
+                                    {/* Horizontal Line to Card - Subtle gradient */}
                                     <Box
                                         style={{
                                             position: "absolute",
@@ -76,7 +87,9 @@ export default function ProjectTimeline({ projects }: ProjectTimelineProps) {
                                             top: "50%",
                                             width: "24px",
                                             height: "2px",
-                                            backgroundColor: "var(--mantine-color-gray-3)",
+                                            background: isLeft
+                                                ? "linear-gradient(90deg, rgba(139, 92, 246, 0.4), rgba(139, 92, 246, 0.1))"
+                                                : "linear-gradient(270deg, rgba(139, 92, 246, 0.4), rgba(139, 92, 246, 0.1))",
                                             transform: "translateY(-50%)",
                                             zIndex: 1,
                                         }}
@@ -110,7 +123,7 @@ export default function ProjectTimeline({ projects }: ProjectTimelineProps) {
                     style={{ position: "relative", width: "100%" }}
                     hiddenFrom="md"
                 >
-                    {/* Left Line */}
+                    {/* Left Line - Glassmorphic gradient */}
                     <Box
                         style={{
                             position: "absolute",
@@ -118,8 +131,9 @@ export default function ProjectTimeline({ projects }: ProjectTimelineProps) {
                             top: 0,
                             bottom: 0,
                             width: "2px",
-                            backgroundColor: "var(--mantine-color-gray-3)",
+                            background: "linear-gradient(180deg, rgba(139, 92, 246, 0.4), rgba(59, 130, 246, 0.4), rgba(236, 72, 153, 0.3))",
                             zIndex: 0,
+                            boxShadow: "0 0 10px rgba(139, 92, 246, 0.3)",
                         }}
                     />
 
@@ -132,7 +146,7 @@ export default function ProjectTimeline({ projects }: ProjectTimelineProps) {
                                     position: "relative",
                                 }}
                             >
-                                {/* Timeline Dot */}
+                                {/* Timeline Dot - Enhanced glow effect */}
                                 <Box
                                     style={{
                                         position: "absolute",
@@ -141,13 +155,24 @@ export default function ProjectTimeline({ projects }: ProjectTimelineProps) {
                                         zIndex: 2,
                                     }}
                                 >
-                                    <IconCircleFilled
-                                        size={16}
-                                        color="var(--mantine-color-blue-6)"
-                                    />
+                                    <Box
+                                        style={{
+                                            position: "relative",
+                                            width: "16px",
+                                            height: "16px",
+                                        }}
+                                    >
+                                        <IconCircleFilled
+                                            size={16}
+                                            style={{
+                                                color: "#8b5cf6",
+                                                filter: "drop-shadow(0 0 6px rgba(139, 92, 246, 0.6))",
+                                            }}
+                                        />
+                                    </Box>
                                 </Box>
 
-                                {/* Horizontal Line to Card */}
+                                {/* Horizontal Line to Card - Subtle gradient */}
                                 <Box
                                     style={{
                                         position: "absolute",
@@ -155,7 +180,7 @@ export default function ProjectTimeline({ projects }: ProjectTimelineProps) {
                                         top: "28px",
                                         width: "40px",
                                         height: "2px",
-                                        backgroundColor: "var(--mantine-color-gray-3)",
+                                        background: "linear-gradient(90deg, rgba(139, 92, 246, 0.4), rgba(139, 92, 246, 0.1))",
                                         zIndex: 1,
                                     }}
                                 />

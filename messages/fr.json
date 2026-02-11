@@ -103,10 +103,13 @@
     "emptyDesc": "Ajoutez votre premier projet pour commencer.",
     "deleteTitle": "Supprimer le projet",
     "deleteMessage": "Cela supprimera définitivement",
-    "ProjectCard": {
+    "projectCard": {
       "present": "Présent",
       "edit": "Modifier",
-      "delete": "Supprimer"
+      "delete": "Supprimer",
+      "languages": "Langages",
+      "skills": "Compétences",
+      "github": "Voir sur GitHub"
     },
     "addProjectModal": {
       "title": "Nouveau projet",
@@ -200,6 +203,36 @@
       }
     }
   },
+  "skills": {
+    "title": "Compétences",
+    "addButton": "Ajouter une compétence",
+    "modalTitle": "Ajouter une nouvelle compétence",
+    "editModalTitle": "Modifier la compétence",
+    "nameLabel": "Nom de la compétence",
+    "namePlaceholder": "Entrez le nom de la compétence",
+    "categoryLabel": "Catégorie",
+    "categoryPlaceholder": "Sélectionnez une catégorie",
+    "iconLabel": "Icône",
+    "dropzoneText": "Glissez une image ici ou cliquez pour sélectionner",
+    "dropzoneHint": "Téléchargez une icône personnalisée ou nous en générerons une automatiquement",
+    "dropzoneHintOptional": "Optionnel : Téléchargez une icône personnalisée ou conservez l'existante",
+    "clickToUploadCustom": "Cliquez ou déposez pour télécharger une icône personnalisée",
+    "autoIconWillBeUsed": "Icône auto-générée affichée ci-dessus",
+    "zoom": "Zoom",
+    "changeImage": "Changer l'image",
+    "cancelButton": "Annuler",
+    "submitButton": "Enregistrer",
+    "deleteTitle": "Supprimer la compétence",
+    "deleteMessage": "Êtes-vous sûr de vouloir supprimer cette compétence ?",
+    "emptyTitle": "Aucune compétence pour le moment",
+    "emptyDesc": "Commencez par ajouter votre première compétence",
+    "category": {
+      "language": "Langages",
+      "framework": "Frameworks",
+      "software": "Logiciels",
+      "database": "Bases de données"
+    }
+  },
   "hobbies": {
     "title": "Loisirs",
     "addButton": "Ajouter un loisir",
@@ -218,6 +251,13 @@
     "namePlaceholder": "Entrez le nom du loisir",
     "cancelButton": "Annuler",
     "submitButton": "Ajouter"
+  },
+  "testimonials": {
+    "title": "Témoignages",
+    "emptyTitle": "Aucun témoignage pour le moment",
+    "emptyDesc": "Les témoignages de vos clients apparaîtront ici",
+    "deleteTitle": "Supprimer le témoignage",
+    "deleteMessage": "Êtes-vous sûr de vouloir supprimer ce témoignage ?"
   },
   "resumes": {
     "title": "CV",
@@ -246,6 +286,23 @@
     "nameLabel": "Nom",
     "namePlaceholder": "Entrez le nom du CV",
     "activate": "Définir comme actif"
+  },
+  "contact": {
+    "title": "Informations de contact",
+    "description": "Mettez à jour les informations affichées sur votre portfolio",
+    "savedTitle": "Enregistré !",
+    "savedMessage": "Vos informations de contact ont été mises à jour avec succès.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "votre.email@exemple.com",
+    "githubLabel": "GitHub",
+    "githubPlaceholder": "https://github.com/nomutilisateur",
+    "linkedinLabel": "LinkedIn",
+    "linkedinPlaceholder": "https://linkedin.com/in/nomutilisateur",
+    "saveButton": "Enregistrer les modifications",
+    "previewTitle": "Aperçu",
+    "noEmail": "Aucun email défini",
+    "noGithub": "Aucun GitHub défini",
+    "noLinkedin": "Aucun LinkedIn défini"
   },
   "confirmModal": {
     "cancel": "Annuler",

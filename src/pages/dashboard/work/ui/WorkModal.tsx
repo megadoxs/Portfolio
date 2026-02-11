@@ -95,8 +95,8 @@ export default function WorkModal({ opened, onClose, onSubmit, isLoading, editWo
 
                     <Group grow align="flex-start">
                         <DateInput
-                            label={t("fields.startDate.label")}
-                            placeholder={t("fields.startDate.placeholder")}
+                            label={t("startDateLabel")}
+                            placeholder={t("startDatePlaceholder")}
                             radius="xl"
                             valueFormat={dateFormat}
                             leftSection={<IconCalendar size={16} stroke={1.5} />}
@@ -114,8 +114,8 @@ export default function WorkModal({ opened, onClose, onSubmit, isLoading, editWo
                         />
 
                         <DateInput
-                            label={t("fields.endDate.label")}
-                            placeholder={t("fields.endDate.placeholder")}
+                            label={t("endDateLabel")}
+                            placeholder={t("endDatePlaceholder")}
                             radius="xl"
                             valueFormat={dateFormat}
                             clearable

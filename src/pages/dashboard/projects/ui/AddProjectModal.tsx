@@ -652,7 +652,7 @@ export default function AddProjectModal({
                             <Stack gap="xs">
                                 <Text size="sm" fw={500}>{t("fields.skills.selected", { count: selectedSkills.length })}</Text>
                                 <Group gap="xs">
-                                    {selectedSkills.map((skill) => (
+                                    {selectedSkills.map((skill) => ( //TODO use the SkillPill
                                         <Pill
                                             key={skill}
                                             withRemoveButton

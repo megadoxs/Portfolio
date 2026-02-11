@@ -1,5 +1,5 @@
 import {Box} from "@mantine/core";
-import Sidebar from "@/widgets/SideBar/sidebar";
+import Sidebar from "@/widgets/SideBar/Sidebar";
 import {auth0} from "@/shared/lib/auth0/auth0";
 import {redirect} from "next/navigation";
 

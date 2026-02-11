@@ -8,6 +8,7 @@ import {
     Menu,
     Avatar,
     Group,
+    useMantineColorScheme,
 } from "@mantine/core";
 import {
     IconSchool,
@@ -33,6 +34,7 @@ export default function Sidebar() {
     const pathname = usePathname();
     const { user } = useUser();
     const t = useTranslations("sidebar");
+    const { colorScheme } = useMantineColorScheme();
 
     const navItems = [
         { href: "/dashboard", label: t("overview"), icon: IconChartBar },
@@ -56,15 +58,24 @@ export default function Sidebar() {
                 position: "fixed",
                 left: 0,
                 top: NAVBAR_HEIGHT,
-                borderRight: "1px solid var(--mantine-color-gray-3)",
                 display: "flex",
                 flexDirection: "column",
-                background: "var(--mantine-color-body)",
+                backgroundColor: colorScheme === "dark"
+                    ? "rgba(16, 17, 19, 0.3)"
+                    : "rgba(255, 255, 255, 0.3)",
+                backdropFilter: "saturate(180%) blur(20px)",
+                WebkitBackdropFilter: "saturate(180%) blur(20px)",
             }}
         >
-            <Box p="md" style={{ borderBottom: "1px solid var(--mantine-color-gray-3)" }}>
+            <Box p="md">
                 <Group justify="space-between" align="center">
-                    <Text size="xl" fw={900} c="gray.7">
+                    <Text
+                        size="xl"
+                        fw={900}
+                        style={{
+                            color: colorScheme === "dark" ? "var(--mantine-color-white)" : "var(--mantine-color-black)",
+                        }}
+                    >
                         {t("dashboard")}
                     </Text>
                 </Group>
@@ -89,9 +100,9 @@ export default function Sidebar() {
                             styles={{
                                 root: {
                                     fontWeight: isActive ? 600 : 400,
-                                    color: isActive
-                                        ? "var(--mantine-color-gray-9)"
-                                        : "var(--mantine-color-gray-7)",
+                                    color: colorScheme === "dark"
+                                        ? "var(--mantine-color-white)"
+                                        : "var(--mantine-color-black)",
                                 },
                                 section: {
                                     marginRight: 12,
@@ -104,7 +115,7 @@ export default function Sidebar() {
                 })}
             </Stack>
 
-            <Box p="md" style={{ borderTop: "1px solid var(--mantine-color-gray-3)" }}>
+            <Box p="md">
                 <Menu shadow="md" width={200} position="top-end">
                     <Menu.Target>
                         <Button

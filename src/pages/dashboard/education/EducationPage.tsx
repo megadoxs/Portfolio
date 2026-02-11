@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Container, Grid, Loader, Stack, Text, Group } from "@mantine/core";
+import {Button, Container, Grid, Loader, Stack, Text, Group, useMantineColorScheme} from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { IconSchool, IconPlus } from "@tabler/icons-react";
@@ -13,6 +13,7 @@ import EducationCard from "@/shared/ui/EducationCard";
 
 export default function EducationPage() {
     const t = useTranslations("education");
+    const { colorScheme } = useMantineColorScheme();
 
     const [modalOpen, setModalOpen] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState<Education | null>(null);
@@ -21,6 +22,8 @@ export default function EducationPage() {
     const [isFetching, setIsFetching] = useState(true);
     const [isCreating, setIsCreating] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    const theme = colorScheme === 'dark' ? 'dark' : 'light';
 
     useEffect(() => {
         fetchEducation();
@@ -104,6 +107,7 @@ export default function EducationPage() {
                         radius="xl"
                         leftSection={<IconPlus size={14} stroke={2} />}
                         onClick={handleAdd}
+                        className={`glassButton ${theme}`}
                     >
                         {t("addButton")}
                     </Button>

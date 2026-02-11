@@ -19,3 +19,322 @@ body {
   margin: 0;
   padding: 0;
 }
+
+/* ============================================
+   GLASS BUTTON
+   ============================================ */
+
+.glassButton {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.glassButton.light {
+  background-color: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: var(--mantine-color-gray-7);
+}
+
+.glassButton.light:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.glassButton.dark {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--mantine-color-gray-3);
+}
+
+.glassButton.dark:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   GLOW EFFECTS
+   ============================================ */
+
+.glowWrapper {
+  position: relative;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.glowWrapper::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  border-radius: 24px;
+  filter: blur(30px);
+  z-index: -1;
+  animation: pulseGlow 3s ease-in-out infinite;
+  transition: opacity 0.3s ease, background 0.3s ease;
+  pointer-events: none;
+}
+
+.glowWrapper.light::before {
+  background: linear-gradient(135deg, #a5b4fc, #c4b5fd, #fbcfe8, #93c5fd);
+  opacity: 0.2;
+}
+
+.glowWrapper.dark::before {
+  background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #4facfe);
+  opacity: 0.25;
+}
+
+/* Smaller glow variant for cards */
+.glowWrapperSmall::before {
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  border-radius: 20px;
+}
+
+/* ============================================
+   GLASSMORPHISM CARDS
+   ============================================ */
+
+.glassCard {
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  transition: box-shadow 150ms ease, transform 150ms ease;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.glassCard.light {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.glassCard.dark {
+  background-color: rgba(16, 17, 19, 0.5);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.glassCard:hover {
+  transform: translateY(-2px);
+}
+
+.glassCard.light:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.glassCard.dark:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================
+   PROJECT CARD SPECIFIC
+   ============================================ */
+
+.projectCardWrapper {
+  height: 260px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.projectCard {
+  height: 260px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  cursor: default;
+}
+
+/* ============================================
+   NAVBAR GLASSMORPHISM
+   ============================================ */
+
+.navbarGlass {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  width: 100%;
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+.navbarGlass.light {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.navbarGlass.dark {
+  background-color: rgba(16, 17, 19, 0.3);
+}
+
+/* ============================================
+   LANGUAGE DOT INDICATORS
+   ============================================ */
+
+.languageDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* GitHub language colors */
+.languageDot.javascript { background-color: #f1e05a; }
+.languageDot.typescript { background-color: #3178c6; }
+.languageDot.python { background-color: #3572A5; }
+.languageDot.java { background-color: #b07219; }
+.languageDot.csharp { background-color: #178600; }
+.languageDot.cpp { background-color: #f34b7d; }
+.languageDot.c { background-color: #555555; }
+.languageDot.go { background-color: #00ADD8; }
+.languageDot.rust { background-color: #dea584; }
+.languageDot.ruby { background-color: #701516; }
+.languageDot.php { background-color: #4F5D95; }
+.languageDot.swift { background-color: #F05138; }
+.languageDot.kotlin { background-color: #A97BFF; }
+.languageDot.html { background-color: #e34c26; }
+.languageDot.css { background-color: #563d7c; }
+.languageDot.hlsl { background-color: #aace60; }
+.languageDot.shaderlab { background-color: #222c37; }
+.languageDot.shell { background-color: #89e051; }
+.languageDot.dart { background-color: #00B4AB; }
+.languageDot.r { background-color: #198CE7; }
+.languageDot.scala { background-color: #c22d40; }
+.languageDot.vue { background-color: #41b883; }
+.languageDot.default { background-color: #858585; }
+
+/* ============================================
+   STATUS BADGES
+   ============================================ */
+
+.statusBadge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.statusBadge.active { color: #22c55e; }
+.statusBadge.inactive { color: #94a3b8; }
+.statusBadge.completed { color: #3b82f6; }
+
+/* ============================================
+   UTILITY ANIMATIONS
+   ============================================ */
+
+.fadeInUp {
+  animation: fadeInUp 1s ease-out;
+}
+
+.fadeInUpDelayed {
+  animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+/* ============================================
+   HOME PAGE SPECIFIC
+   ============================================ */
+
+.heroSection {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+.imageWrapper {
+  position: relative;
+  animation: fadeInUp 1s ease-out;
+}
+
+.heroContent {
+  animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+/* ============================================
+   RESPONSIVE UTILITIES
+   ============================================ */
+
+@media (max-width: 768px) {
+  .glowWrapper::before {
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+  }
+}
+
+/* ============================================
+   CUSTOM SCROLLBAR
+   ============================================ */
+
+/* WebKit browsers (Chrome, Safari, Edge) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 12px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(55, 58, 64, 0.5);
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(92, 95, 102, 0.7);
+  background-clip: padding-box;
+}
+
+/* Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(55, 58, 64, 0.5) transparent;
+}
+
+/* Light mode scrollbar */
+[data-mantine-color-scheme="light"] .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(193, 194, 197, 0.5);
+  background-clip: padding-box;
+}
+
+[data-mantine-color-scheme="light"] .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(166, 167, 171, 0.7);
+  background-clip: padding-box;
+}
+
+[data-mantine-color-scheme="light"] .custom-scrollbar {
+  scrollbar-color: rgba(193, 194, 197, 0.5) transparent;
+}

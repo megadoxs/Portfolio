@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Container, Grid, Loader, Stack, Text, Group, Badge } from "@mantine/core";
+import {Button, Container, Grid, Loader, Stack, Text, Group, Badge, useMantineColorScheme} from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { IconFileText, IconPlus } from "@tabler/icons-react";
@@ -14,6 +14,7 @@ import { addResume, deleteResume, activateResume, Resume, ResumeRequestModel, ge
 export default function ResumesPage() {
     const t = useTranslations("resumes");
     const tlang = useTranslations("language")
+    const { colorScheme } = useMantineColorScheme();
 
     const [modalOpen, setModalOpen] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState<Resume | null>(null);
@@ -21,6 +22,8 @@ export default function ResumesPage() {
     const [isFetching, setIsFetching] = useState(true);
     const [isCreating, setIsCreating] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    const theme = colorScheme === 'dark' ? 'dark' : 'light';
 
     useEffect(() => {
         fetchResumes();
@@ -116,6 +119,7 @@ export default function ResumesPage() {
                         radius="xl"
                         leftSection={<IconPlus size={14} stroke={2} />}
                         onClick={handleAdd}
+                        className={`glassButton ${theme}`}
                     >
                         {t("addButton")}
                     </Button>

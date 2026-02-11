@@ -65,18 +65,34 @@ model Resume {
 model Skill {
   id        String      @id     @default(cuid())
   name      String      @unique
+  category  SkillCategory
+  icon      String?
   projects  Project[]
 
+
   @@map("skills")
+}
+
+enum SkillCategory {
+  LANGUAGE
+  FRAMEWORK
+  SOFTWARE
+  DATABASE
 }
 
 model Testimonial {
   id            String      @id     @default(cuid())
   name          String
   testimonial   String
-  status        String
+  status        TestimonialStatus @default(PENDING)
 
   @@map("testimonials")
+}
+
+enum TestimonialStatus {
+  PENDING
+  APPROVED
+  DENIED
 }
 
 model Work {

@@ -1,5 +1,6 @@
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
+import "./globals.css"
 import {ColorSchemeScript, mantineHtmlProps, MantineProvider, createTheme} from "@mantine/core";
 import {ModalsProvider} from "@mantine/modals";
 import type {ReactNode} from "react";
@@ -7,8 +8,9 @@ import {NextIntlClientProvider} from "next-intl";
 import {getMessages, getTranslations} from "next-intl/server";
 import {Auth0Provider} from "@auth0/nextjs-auth0";
 import {auth0} from "@/shared/lib/auth0/auth0";
-import NavBar from "@/widgets/NavBar/navbar";
+import Navbar from "@/widgets/NavBar/Navbar";
 import {Metadata} from "next";
+import Background from "@/shared/ui/background/Background";
 
 export async function generateMetadata({
                                            params,
@@ -69,12 +71,17 @@ export default async function RootLayout({
                 />
                 <title>{t("title")}</title>
             </head>
-            <body style={{minHeight: "100vh", display: "flex", flexDirection: "column"}}>
+            <body style={{margin: 0, padding: 0, height: "100vh", overflow: "hidden"}}>
             <Auth0Provider user={user}>
                 <MantineProvider theme={theme} defaultColorScheme="dark">
                     <ModalsProvider>
-                        <NavBar/>
-                        {children}
+                        <div style={{display: "flex", flexDirection: "column", height: "100vh", position: "relative"}}>
+                            <Background/>
+                            <Navbar/>
+                            <main className="custom-scrollbar" style={{flex: 1, overflow: "auto", position: "relative", zIndex: 1}}>
+                                {children}
+                            </main>
+                        </div>
                     </ModalsProvider>
                 </MantineProvider>
             </Auth0Provider>

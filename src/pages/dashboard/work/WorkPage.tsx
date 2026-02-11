@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Container, Loader, Stack, Text, Group } from "@mantine/core";
+import {Button, Container, Loader, Stack, Text, Group, useMantineColorScheme} from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { IconBriefcase, IconPlus } from "@tabler/icons-react";
@@ -13,6 +13,7 @@ import WorkCard from "@/shared/ui/WorkCard";
 
 export default function WorkPage() {
     const t = useTranslations("work");
+    const { colorScheme } = useMantineColorScheme();
 
     const [modalOpen, setModalOpen] = useState(false);
     const [editTarget, setEditTarget] = useState<Work | null>(null);
@@ -21,6 +22,8 @@ export default function WorkPage() {
     const [isFetching, setIsFetching] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    const theme = colorScheme === 'dark' ? 'dark' : 'light';
 
     useEffect(() => {
         fetchWork();
@@ -114,6 +117,7 @@ export default function WorkPage() {
                         radius="xl"
                         leftSection={<IconPlus size={14} stroke={2} />}
                         onClick={handleAdd}
+                        className={`glassButton ${theme}`}
                     >
                         {t("addButton")}
                     </Button>

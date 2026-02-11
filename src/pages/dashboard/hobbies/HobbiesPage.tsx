@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Container, Grid, Loader, Stack, Text, Group } from "@mantine/core";
+import {Button, Container, Grid, Loader, Stack, Text, Group, useMantineColorScheme} from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { IconHeart, IconPlus } from "@tabler/icons-react";
@@ -13,6 +13,7 @@ import HobbyCard from "@/shared/ui/HobbyCard";
 
 export default function HobbiesPage() {
     const t = useTranslations("hobbies");
+    const { colorScheme } = useMantineColorScheme();
 
     const [modalOpen, setModalOpen] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState<Hobby | null>(null);
@@ -20,6 +21,8 @@ export default function HobbiesPage() {
     const [isFetching, setIsFetching] = useState(true);
     const [isCreating, setIsCreating] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    const theme = colorScheme === 'dark' ? 'dark' : 'light';
 
     useEffect(() => {
         fetchHobbies();
@@ -92,6 +95,7 @@ export default function HobbiesPage() {
                         radius="xl"
                         leftSection={<IconPlus size={14} stroke={2} />}
                         onClick={handleAdd}
+                        className={`glassButton ${theme}`}
                     >
                         {t("addButton")}
                     </Button>

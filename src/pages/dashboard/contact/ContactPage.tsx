@@ -15,9 +15,12 @@ import {
     Center,
 } from "@mantine/core";
 import { IconMail, IconBrandGithub, IconBrandLinkedin, IconCheck } from "@tabler/icons-react";
+import { useTranslations } from "next-intl";
 import {Contact, getContact, updateContact} from "@/entities/contact";
 
 export default function ContactPage() {
+    const t = useTranslations("contact");
+
     const [contact, setContact] = useState<Contact | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -78,22 +81,22 @@ export default function ContactPage() {
             <Stack gap="lg">
                 <div>
                     <Title order={2} mb="xs">
-                        Contact Information
+                        {t("title")}
                     </Title>
                     <Text c="dimmed" size="sm">
-                        Update your contact details that appear on your resume and portfolio
+                        {t("description")}
                     </Text>
                 </div>
 
                 {saved && (
                     <Alert
                         icon={<IconCheck size={16} />}
-                        title="Saved!"
+                        title={t("savedTitle")}
                         color="green"
                         withCloseButton
                         onClose={() => setSaved(false)}
                     >
-                        Your contact information has been updated successfully.
+                        {t("savedMessage")}
                     </Alert>
                 )}
 
@@ -101,8 +104,8 @@ export default function ContactPage() {
                     <form onSubmit={handleSubmit}>
                         <Stack gap="md">
                             <TextInput
-                                label="Email"
-                                placeholder="your.email@example.com"
+                                label={t("emailLabel")}
+                                placeholder={t("emailPlaceholder")}
                                 leftSection={<IconMail size={16} />}
                                 value={formData.email}
                                 onChange={(e) =>
@@ -113,8 +116,8 @@ export default function ContactPage() {
                             />
 
                             <TextInput
-                                label="GitHub"
-                                placeholder="https://github.com/username"
+                                label={t("githubLabel")}
+                                placeholder={t("githubPlaceholder")}
                                 leftSection={<IconBrandGithub size={16} />}
                                 value={formData.github}
                                 onChange={(e) =>
@@ -124,8 +127,8 @@ export default function ContactPage() {
                             />
 
                             <TextInput
-                                label="LinkedIn"
-                                placeholder="https://linkedin.com/in/username"
+                                label={t("linkedinLabel")}
+                                placeholder={t("linkedinPlaceholder")}
                                 leftSection={<IconBrandLinkedin size={16} />}
                                 value={formData.linkedin}
                                 onChange={(e) =>
@@ -136,7 +139,7 @@ export default function ContactPage() {
 
                             <Group justify="flex-end" mt="md">
                                 <Button type="submit" loading={saving}>
-                                    Save Changes
+                                    {t("saveButton")}
                                 </Button>
                             </Group>
                         </Stack>
@@ -146,20 +149,20 @@ export default function ContactPage() {
                 {/* Preview Section */}
                 <Paper shadow="sm" p="xl" radius="md" withBorder>
                     <Title order={4} mb="md">
-                        Preview
+                        {t("previewTitle")}
                     </Title>
                     <Stack gap="xs">
                         <Group gap="xs">
                             <IconMail size={16} />
-                            <Text size="sm">{formData.email || "No email set"}</Text>
+                            <Text size="sm">{formData.email || t("noEmail")}</Text>
                         </Group>
                         <Group gap="xs">
                             <IconBrandGithub size={16} />
-                            <Text size="sm">{formData.github || "No GitHub set"}</Text>
+                            <Text size="sm">{formData.github || t("noGithub")}</Text>
                         </Group>
                         <Group gap="xs">
                             <IconBrandLinkedin size={16} />
-                            <Text size="sm">{formData.linkedin || "No LinkedIn set"}</Text>
+                            <Text size="sm">{formData.linkedin || t("noLinkedin")}</Text>
                         </Group>
                     </Stack>
                 </Paper>

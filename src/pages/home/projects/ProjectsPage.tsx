@@ -73,98 +73,98 @@ export default function ProjectTimelinePage() {
     return (
         <Grid gutter="xl" style={{ overflowX: 'clip' }}>
             {/* Left side - Project Timeline */}
-            <Grid.Col span={{ base: 12, md: 9 }}>
+            <Grid.Col span={{ base: 12 }}> {/*md: 9*/}
                 <ProjectTimeline projects={projects} />
             </Grid.Col>
 
-            {/* Right side - Bordered Column with Education, Work, Hobbies */}
-            <Grid.Col span={{ base: 12, md: 3 }}>
-                <Box
-                    style={{
-                        border: `1px solid ${borderColor}`,
-                        borderRadius: 'var(--mantine-radius-md)',
-                        overflow: 'hidden',
-                        transition: 'border-color 0.3s ease',
-                    }}
-                >
-                    {/* Education Section */}
-                    {education.length > 0 && (
-                        <>
-                            <Box
-                                p="lg"
-                                style={{
-                                    backgroundColor: headerBgColor,
-                                    transition: 'background-color 0.3s ease',
-                                }}
-                            >
-                                <Group gap="xs">
-                                    <IconSchool size={20} color="var(--mantine-color-blue-6)" />
-                                    <Text size="lg" fw={600}>
-                                        Education
-                                    </Text>
-                                </Group>
-                            </Box>
-                            <Stack gap="md" p="lg">
-                                {education.map((edu) => (
-                                    <EducationCard key={edu.id} education={edu} />
-                                ))}
-                            </Stack>
-                            {(work.length > 0 || hobbies.length > 0) && <Divider />}
-                        </>
-                    )}
+            {/*/!* Right side - Bordered Column with Education, Work, Hobbies *!/*/}
+            {/*<Grid.Col span={{ base: 12, md: 3 }}>*/}
+            {/*    <Box*/}
+            {/*        style={{*/}
+            {/*            border: `1px solid ${borderColor}`,*/}
+            {/*            borderRadius: 'var(--mantine-radius-md)',*/}
+            {/*            overflow: 'hidden',*/}
+            {/*            transition: 'border-color 0.3s ease',*/}
+            {/*        }}*/}
+            {/*    >*/}
+            {/*        /!* Education Section *!/*/}
+            {/*        {education.length > 0 && (*/}
+            {/*            <>*/}
+            {/*                <Box*/}
+            {/*                    p="lg"*/}
+            {/*                    style={{*/}
+            {/*                        backgroundColor: headerBgColor,*/}
+            {/*                        transition: 'background-color 0.3s ease',*/}
+            {/*                    }}*/}
+            {/*                >*/}
+            {/*                    <Group gap="xs">*/}
+            {/*                        <IconSchool size={20} color="var(--mantine-color-blue-6)" />*/}
+            {/*                        <Text size="lg" fw={600}>*/}
+            {/*                            Education*/}
+            {/*                        </Text>*/}
+            {/*                    </Group>*/}
+            {/*                </Box>*/}
+            {/*                <Stack gap="md" p="lg">*/}
+            {/*                    {education.map((edu) => (*/}
+            {/*                        <EducationCard key={edu.id} education={edu} />*/}
+            {/*                    ))}*/}
+            {/*                </Stack>*/}
+            {/*                {(work.length > 0 || hobbies.length > 0) && <Divider />}*/}
+            {/*            </>*/}
+            {/*        )}*/}
 
-                    {/* Work Experience Section */}
-                    {work.length > 0 && (
-                        <>
-                            <Box
-                                p="lg"
-                                style={{
-                                    backgroundColor: headerBgColor,
-                                    transition: 'background-color 0.3s ease',
-                                }}
-                            >
-                                <Group gap="xs">
-                                    <IconBriefcase size={20} color="var(--mantine-color-green-6)" />
-                                    <Text size="lg" fw={600}>
-                                        Work Experience
-                                    </Text>
-                                </Group>
-                            </Box>
-                            <Stack gap="md" p="lg">
-                                {work.map((w) => (
-                                    <WorkCard key={w.id} work={w} />
-                                ))}
-                            </Stack>
-                            {hobbies.length > 0 && <Divider />}
-                        </>
-                    )}
+            {/*        /!* Work Experience Section *!/*/}
+            {/*        {work.length > 0 && (*/}
+            {/*            <>*/}
+            {/*                <Box*/}
+            {/*                    p="lg"*/}
+            {/*                    style={{*/}
+            {/*                        backgroundColor: headerBgColor,*/}
+            {/*                        transition: 'background-color 0.3s ease',*/}
+            {/*                    }}*/}
+            {/*                >*/}
+            {/*                    <Group gap="xs">*/}
+            {/*                        <IconBriefcase size={20} color="var(--mantine-color-green-6)" />*/}
+            {/*                        <Text size="lg" fw={600}>*/}
+            {/*                            Work Experience*/}
+            {/*                        </Text>*/}
+            {/*                    </Group>*/}
+            {/*                </Box>*/}
+            {/*                <Stack gap="md" p="lg">*/}
+            {/*                    {work.map((w) => (*/}
+            {/*                        <WorkCard key={w.id} work={w} />*/}
+            {/*                    ))}*/}
+            {/*                </Stack>*/}
+            {/*                {hobbies.length > 0 && <Divider />}*/}
+            {/*            </>*/}
+            {/*        )}*/}
 
-                    {/* Hobbies Section */}
-                    {hobbies.length > 0 && (
-                        <>
-                            <Box
-                                p="lg"
-                                style={{
-                                    backgroundColor: headerBgColor,
-                                    transition: 'background-color 0.3s ease',
-                                }}
-                            >
-                                <Group gap="xs">
-                                    <IconHeart size={20} color="var(--mantine-color-pink-6)" />
-                                    <Text size="lg" fw={600}>
-                                        Hobbies
-                                    </Text>
-                                </Group>
-                            </Box>
-                            <Stack gap="md" p="lg">
-                                {hobbies.map((hobby) => (
-                                    <HobbyCard key={hobby.id} hobby={hobby} />
-                                ))}
-                            </Stack>
-                        </>
-                    )}
-                </Box>
-            </Grid.Col>
+            {/*        /!* Hobbies Section *!/*/}
+            {/*        {hobbies.length > 0 && (*/}
+            {/*            <>*/}
+            {/*                <Box*/}
+            {/*                    p="lg"*/}
+            {/*                    style={{*/}
+            {/*                        backgroundColor: headerBgColor,*/}
+            {/*                        transition: 'background-color 0.3s ease',*/}
+            {/*                    }}*/}
+            {/*                >*/}
+            {/*                    <Group gap="xs">*/}
+            {/*                        <IconHeart size={20} color="var(--mantine-color-pink-6)" />*/}
+            {/*                        <Text size="lg" fw={600}>*/}
+            {/*                            Hobbies*/}
+            {/*                        </Text>*/}
+            {/*                    </Group>*/}
+            {/*                </Box>*/}
+            {/*                <Stack gap="md" p="lg">*/}
+            {/*                    {hobbies.map((hobby) => (*/}
+            {/*                        <HobbyCard key={hobby.id} hobby={hobby} />*/}
+            {/*                    ))}*/}
+            {/*                </Stack>*/}
+            {/*            </>*/}
+            {/*        )}*/}
+            {/*    </Box>*/}
+            {/*</Grid.Col>*/}
         </Grid>
     );
 }

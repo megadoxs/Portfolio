@@ -1,0 +1,1 @@
+export { SkillPage as default } from "@/pages/dashboard"

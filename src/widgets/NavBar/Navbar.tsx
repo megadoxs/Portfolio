@@ -1,15 +1,14 @@
 "use client";
 
-import {Button, Container, Group, Text, Burger, Drawer, Stack, Box, Divider, ScrollArea, ActionIcon, useMantineColorScheme} from "@mantine/core";
+import { Button, Container, Group, Text, Burger, Drawer, Stack, Box, Divider, ScrollArea, ActionIcon, useMantineColorScheme } from "@mantine/core";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { usePathname, Link } from "@/src/shared/lib/i18n/navigation";
-import { useTransition, useEffect, useCallback, useState } from "react";
+import { useTransition, useEffect, useCallback } from "react";
 import { useDisclosure } from "@mantine/hooks";
-import {IconSun, IconMoon, IconDownload} from "@tabler/icons-react";
-import {getActiveResumeByLocale} from "@/entities/resume";
+import { IconSun, IconMoon } from "@tabler/icons-react";
 
-export default function NavBar() {
+export default function Navbar() {
     const t = useTranslations("navbar");
     const router = useRouter();
     const pathname = usePathname();
@@ -17,26 +16,8 @@ export default function NavBar() {
     const [isPending, startTransition] = useTransition();
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-    const [hasActiveResume, setHasActiveResume] = useState(false);
-    const [isLoadingResume, setIsLoadingResume] = useState(true);
 
-    // Check for active resume when locale changes
-    useEffect(() => {
-        const checkActiveResume = async () => {
-            setIsLoadingResume(true);
-            try {
-                const resume = await getActiveResumeByLocale(currentLocale);
-                setHasActiveResume(!!resume);
-            } catch (error) {
-                console.error("Error fetching active resume:", error);
-                setHasActiveResume(false);
-            } finally {
-                setIsLoadingResume(false);
-            }
-        };
-
-        checkActiveResume();
-    }, [currentLocale]);
+    const theme = colorScheme === 'dark' ? 'dark' : 'light';
 
     useEffect(() => {
         closeDrawer();
@@ -50,17 +31,6 @@ export default function NavBar() {
         }
     }, [currentLocale, pathname, router]);
 
-    const handleDownloadResume = useCallback(async () => {
-        try {
-            const resume = await getActiveResumeByLocale(currentLocale);
-            if (resume?.url) {
-                window.open(resume.url, '_blank');
-            }
-        } catch (error) {
-            console.error("Error downloading Resume:", error);
-        }
-    }, [currentLocale]);
-
     const navLinks: Array<{
         href: '/' | '/projects' | '/about' | '/contact';
         label: string
@@ -70,6 +40,10 @@ export default function NavBar() {
         { href: "/about", label: t("about") },
         { href: "/contact", label: t("contact") },
     ];
+
+    const textColor = colorScheme === "dark"
+        ? "var(--mantine-color-white)"
+        : "var(--mantine-color-black)";
 
     const navigationButtons = (
         <Group gap="xs">
@@ -81,9 +55,7 @@ export default function NavBar() {
                     variant="subtle"
                     radius="xl"
                     px="md"
-                    style={{
-                        color: colorScheme === "dark" ? "var(--mantine-color-white)" : "var(--mantine-color-black)",
-                    }}
+                    style={{ color: textColor }}
                 >
                     {link.label}
                 </Button>
@@ -102,9 +74,7 @@ export default function NavBar() {
                 aria-label="Switch to English"
                 style={{
                     fontWeight: currentLocale === "en" ? 700 : 400,
-                    color: currentLocale === "en"
-                        ? (colorScheme === "dark" ? "var(--mantine-color-white)" : "var(--mantine-color-black)")
-                        : "var(--mantine-color-gray-7)",
+                    color: currentLocale === "en" ? textColor : "var(--mantine-color-gray-7)",
                 }}
             >
                 EN
@@ -119,9 +89,7 @@ export default function NavBar() {
                 aria-label="Switch to French"
                 style={{
                     fontWeight: currentLocale === "fr" ? 700 : 400,
-                    color: currentLocale === "fr"
-                        ? (colorScheme === "dark" ? "var(--mantine-color-white)" : "var(--mantine-color-black)")
-                        : "var(--mantine-color-gray-7)",
+                    color: currentLocale === "fr" ? textColor : "var(--mantine-color-gray-7)",
                 }}
             >
                 FR
@@ -136,9 +104,7 @@ export default function NavBar() {
             radius="xl"
             size="lg"
             aria-label="Toggle color scheme"
-            style={{
-                color: colorScheme === "dark" ? "var(--mantine-color-white)" : "var(--mantine-color-black)",
-            }}
+            style={{ color: textColor }}
         >
             {colorScheme === "dark" ? (
                 <IconSun size={20} stroke={1.5} />
@@ -148,51 +114,27 @@ export default function NavBar() {
         </ActionIcon>
     );
 
-    const downloadResumeButton = !isLoadingResume && hasActiveResume ? (
-        <Button
-            onClick={handleDownloadResume}
-            variant="light"
-            radius="xl"
-            leftSection={<IconDownload size={16} />}
-            px="md"
-        >
-            {t("resume")}
-        </Button>
-    ) : null;
-
     return (
         <Box>
-            <Box
-                component="header"
-                style={{
-                    position: "sticky",
-                    top: 0,
-                    zIndex: 10,
-                    width: "100%",
-                    background: "var(--mantine-color-body)",
-                    borderBottom: "1px solid var(--mantine-color-gray-3)",
-                }}
-            >
+            <Box component="header" className={`navbarGlass ${theme}`}>
                 <Container size="100%" py="md" px="xl">
                     <Group justify="space-between" align="center">
-                        {/* Logo and Resume Button */}
-                        <Group gap="xl">
-                            <Text
-                                size="xl"
-                                fw={900}
-                                style={{
-                                    color: colorScheme === "dark" ? "var(--mantine-color-white)" : "var(--mantine-color-black)",
-                                }}
-                            >
-                                LC
-                            </Text>
-                            {downloadResumeButton}
-                        </Group>
+                        {/* Logo */}
+                        <Text size="xl" fw={900} style={{ color: textColor }}>
+                            LC
+                        </Text>
 
                         {/* Center Navigation - Desktop Only */}
-                        <Group gap="xs" visibleFrom="md">
+                        <Box
+                            visibleFrom="md"
+                            style={{
+                                position: "absolute",
+                                left: "50%",
+                                transform: "translateX(-50%)",
+                            }}
+                        >
                             {navigationButtons}
-                        </Group>
+                        </Box>
 
                         {/* Right Side Controls - Desktop Only */}
                         <Group gap="xs" visibleFrom="md">
@@ -239,9 +181,7 @@ export default function NavBar() {
                                 radius="xl"
                                 fullWidth
                                 justify="flex-start"
-                                style={{
-                                    color: colorScheme === "dark" ? "var(--mantine-color-white)" : "var(--mantine-color-black)",
-                                }}
+                                style={{ color: textColor }}
                             >
                                 {link.label}
                             </Button>
@@ -249,16 +189,6 @@ export default function NavBar() {
                     </Stack>
 
                     <Divider my="sm" />
-
-                    {/* Mobile Resume Download Button */}
-                    {downloadResumeButton && (
-                        <>
-                            <Box px="md" pb="sm">
-                                {downloadResumeButton}
-                            </Box>
-                            <Divider my="sm" />
-                        </>
-                    )}
 
                     {/* Mobile Controls */}
                     <Stack px="md" gap="sm" pb="xl">
