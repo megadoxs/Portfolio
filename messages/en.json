@@ -10,13 +10,60 @@
   "navbar": {
     "home": "Home",
     "projects": "Projects",
+    "sections": {
+      "work": "Work Experience",
+      "education": "Education",
+      "skills": "Skills",
+      "hobbies": "Hobbies & Interests",
+      "testimonials": "Testimonials"
+    },
     "about": "About",
-    "contact": "Contact",
-    "resume": "Resume"
+    "contact": "Contact"
   },
   "home": {
     "title": "Full Stack Developer",
-    "slogan": "Building quality software that lasts."
+    "slogan": "Building quality software that lasts.",
+    "buttons": {
+      "github": "GitHub",
+      "linkedin": "LinkedIn",
+      "resume": "Resume"
+    },
+    "sections": {
+      "projects": "Projects",
+      "work": "Work Experience",
+      "education": "Education",
+      "skills": "Skills",
+      "hobbies": "Hobbies & Interests",
+      "testimonials": "Testimonials",
+      "leaveTestimonial": "Leave a Testimonial",
+      "testimonialDescription": "Share your experience working with me",
+      "contact": "Get In Touch",
+      "contactDescription": "Have a project in mind? Let's work together to bring your ideas to life."
+    },
+    "skills": {
+      "language": "Languages",
+      "framework": "Frameworks",
+      "software": "Software",
+      "database": "Databases"
+    },
+    "form": {
+      "name": "Your Name",
+      "namePlaceholder": "John Doe",
+      "email": "Email",
+      "emailPlaceholder": "john@example.com",
+      "message": "Message",
+      "messagePlaceholder": "Tell me about your project...",
+      "testimonial": "Your Testimonial",
+      "testimonialPlaceholder": "Share your experience working with me...",
+      "testimonialTooLong": "Testimonial must be 512 characters or less",
+      "submit": "Submit Testimonial",
+      "sendMessage": "Send Message",
+      "success": "Success",
+      "error": "Error",
+      "testimonialSuccess": "Thank you! Your testimonial has been submitted and is pending approval.",
+      "rateLimitExceeded": "You have submitted too many testimonials. Please try again in an hour.",
+      "serverError": "An error occurred. Please try again later."
+    }
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -109,7 +156,10 @@
       "delete": "Delete",
       "languages": "Languages",
       "skills": "Skills",
-      "github": "View on GitHub"
+      "github": "View on GitHub",
+      "details": "View Details",
+      "description": "Description",
+      "viewAll": "View All Skills"
     },
     "addProjectModal": {
       "title": "New Project",
@@ -256,6 +306,14 @@
     "title": "Testimonials",
     "emptyTitle": "No testimonials yet",
     "emptyDesc": "Testimonials from your clients will appear here",
+    "approveButton": "Approve",
+    "denyButton": "Deny",
+    "deleteButton": "Delete",
+    "status": {
+      "APPROVED": "Approved",
+      "PENDING": "Pending",
+      "DENIED": "Denied"
+    },
     "deleteTitle": "Delete Testimonial",
     "deleteMessage": "Are you sure you want to delete this testimonial?"
   },

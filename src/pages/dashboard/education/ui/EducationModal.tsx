@@ -1,11 +1,12 @@
 "use client";
 
-import { Modal, TextInput, Button, Stack, Group, Text, rem, Combobox, InputBase, useCombobox } from "@mantine/core";
-import {DateInput} from "@mantine/dates";
+import { Modal, TextInput, Button, Stack, Group, Text, rem, Combobox, InputBase, useCombobox, Box, Card } from "@mantine/core";
+import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
-import {useLocale, useTranslations} from "next-intl";
-import {IconSchool, IconCertificate, IconBook, IconChevronDown, IconCalendar} from "@tabler/icons-react";
+import { useLocale, useTranslations } from "next-intl";
+import { IconSchool, IconCertificate, IconBook, IconChevronDown, IconCalendar } from "@tabler/icons-react";
 import { Education, EducationRequestModel } from "@/entities/education";
+import { useMantineColorScheme } from "@mantine/core";
 import { useEffect } from "react";
 import 'dayjs/locale/fr';
 
@@ -20,6 +21,8 @@ interface EducationModalProps {
 export default function EducationModal({ opened, onClose, onSubmit, isLoading, initialData }: EducationModalProps) {
     const t = useTranslations("education");
     const locale = useLocale();
+    const { colorScheme } = useMantineColorScheme();
+    const theme = colorScheme === 'dark' ? 'dark' : 'light';
     const combobox = useCombobox({
         onDropdownClose: () => combobox.resetSelectedOption(),
     });
@@ -68,6 +71,7 @@ export default function EducationModal({ opened, onClose, onSubmit, isLoading, i
 
     const handleSubmit = (values: EducationRequestModel) => {
         onSubmit(values);
+        handleClose();
     };
 
     const handleClose = () => {
@@ -114,121 +118,133 @@ export default function EducationModal({ opened, onClose, onSubmit, isLoading, i
         </Combobox.Option>
     ));
 
-    // Date format based on locale
     const dateFormat = locale === 'fr' ? 'D MMMM YYYY' : 'MMMM D, YYYY';
 
     return (
         <Modal
             opened={opened}
             onClose={handleClose}
-            title={initialData ? t("editTitle") : t("addTitle")}
+            title={<Text fw={700} size="lg">{initialData ? t("editTitle") : t("addTitle")}</Text>}
             size="md"
+            centered
+            overlayProps={{
+                backgroundOpacity: 0.55,
+                blur: 3,
+            }}
+            styles={{
+                content: {
+                    backgroundColor: 'transparent',
+                },
+                header: {
+                    backgroundColor: 'transparent',
+                },
+                body: {
+                    padding: 0,
+                    overflow: 'hidden',
+                },
+            }}
         >
-            <form onSubmit={form.onSubmit(handleSubmit)}>
-                <Stack gap="md">
-                    <Combobox
-                        store={combobox}
-                        onOptionSubmit={(val) => {
-                            form.setFieldValue("iconType", val);
-                            combobox.closeDropdown();
-                        }}
-                    >
-                        <Combobox.Target>
-                            <InputBase
-                                component="button"
-                                type="button"
-                                pointer
-                                label={t("iconLabel")}
-                                rightSection={<IconChevronDown size={16} />}
-                                onClick={() => combobox.toggleDropdown()}
-                                rightSectionPointerEvents="none"
-                                error={form.errors.iconType}
-                                required
+            <Box className={`glowWrapper ${theme}`}>
+                <Card className={`glassCard ${theme}`} p="xl" radius="md">
+                    <form onSubmit={form.onSubmit(handleSubmit)}>
+                        <Stack gap="md">
+                            <Combobox
+                                store={combobox}
+                                onOptionSubmit={(val) => {
+                                    form.setFieldValue("iconType", val);
+                                    combobox.closeDropdown();
+                                }}
                             >
-                                {selectedOption ? (
-                                    <Group gap="sm">
-                                        {getIconForValue(selectedOption.value)}
-                                        <Text size="sm">{selectedOption.label}</Text>
-                                    </Group>
-                                ) : (
-                                    <Text size="sm" c="dimmed">{t("iconPlaceholder")}</Text>
-                                )}
-                            </InputBase>
-                        </Combobox.Target>
+                                <Combobox.Target>
+                                    <InputBase
+                                        component="button"
+                                        type="button"
+                                        pointer
+                                        label={t("iconLabel")}
+                                        rightSection={<IconChevronDown size={16} />}
+                                        onClick={() => combobox.toggleDropdown()}
+                                        rightSectionPointerEvents="none"
+                                        error={form.errors.iconType}
+                                        required
+                                    >
+                                        {selectedOption ? (
+                                            <Group gap="sm">
+                                                {getIconForValue(selectedOption.value)}
+                                                <Text size="sm">{selectedOption.label}</Text>
+                                            </Group>
+                                        ) : (
+                                            <Text size="sm" c="dimmed">{t("iconPlaceholder")}</Text>
+                                        )}
+                                    </InputBase>
+                                </Combobox.Target>
 
-                        <Combobox.Dropdown>
-                            <Combobox.Options>{options}</Combobox.Options>
-                        </Combobox.Dropdown>
-                    </Combobox>
+                                <Combobox.Dropdown>
+                                    <Combobox.Options>{options}</Combobox.Options>
+                                </Combobox.Dropdown>
+                            </Combobox>
 
-                    <TextInput
-                        label={t("institutionLabel")}
-                        placeholder={t("institutionPlaceholder")}
-                        {...form.getInputProps("institution")}
-                        required
-                    />
+                            <TextInput
+                                label={t("institutionLabel")}
+                                placeholder={t("institutionPlaceholder")}
+                                {...form.getInputProps("institution")}
+                                required
+                            />
 
-                    <TextInput
-                        label={t("degreeLabel")}
-                        placeholder={t("degreePlaceholder")}
-                        {...form.getInputProps("degree")}
-                    />
+                            <TextInput
+                                label={t("degreeLabel")}
+                                placeholder={t("degreePlaceholder")}
+                                {...form.getInputProps("degree")}
+                            />
 
-                    <TextInput
-                        label={t("fieldOfStudyLabel")}
-                        placeholder={t("fieldOfStudyPlaceholder")}
-                        {...form.getInputProps("fieldOfStudy")}
-                    />
+                            <TextInput
+                                label={t("fieldOfStudyLabel")}
+                                placeholder={t("fieldOfStudyPlaceholder")}
+                                {...form.getInputProps("fieldOfStudy")}
+                            />
 
-                    <Group grow align="flex-start">
-                        <DateInput
-                            label={t("startDateLabel")}
-                            placeholder={t("startDatePlaceholder")}
-                            radius="xl"
-                            valueFormat={dateFormat}
-                            leftSection={<IconCalendar size={16} stroke={1.5} />}
-                            leftSectionPointerEvents="none"
-                            value={form.values.startDate}
-                            onChange={(value) => {
-                                form.setFieldValue('startDate', value ? new Date(value) : new Date());
-                            }}
-                            error={form.errors.startDate}
-                            styles={{
-                                input: { border: "1px solid var(--mantine-color-gray-3)" },
-                            }}
-                            locale={locale}
-                        />
+                            <Group grow align="flex-start">
+                                <DateInput
+                                    label={t("startDateLabel")}
+                                    placeholder={t("startDatePlaceholder")}
+                                    radius="xl"
+                                    valueFormat={dateFormat}
+                                    leftSection={<IconCalendar size={16} stroke={1.5} />}
+                                    leftSectionPointerEvents="none"
+                                    {...form.getInputProps("startDate")}
+                                    styles={{
+                                        input: { border: "1px solid var(--mantine-color-gray-3)" },
+                                    }}
+                                    locale={locale}
+                                />
 
-                        <DateInput
-                            label={t("endDateLabel")}
-                            placeholder={t("endDatePlaceholder")}
-                            radius="xl"
-                            valueFormat={dateFormat}
-                            clearable
-                            leftSection={<IconCalendar size={16} stroke={1.5} />}
-                            leftSectionPointerEvents="none"
-                            value={form.values.endDate}
-                            onChange={(value) => {
-                                form.setFieldValue('endDate', value ? new Date(value) : new Date());
-                            }}
-                            error={form.errors.endDate}
-                            styles={{
-                                input: { border: "1px solid var(--mantine-color-gray-3)" },
-                            }}
-                            locale={locale}
-                        />
-                    </Group>
+                                <DateInput
+                                    label={t("endDateLabel")}
+                                    placeholder={t("endDatePlaceholder")}
+                                    radius="xl"
+                                    valueFormat={dateFormat}
+                                    clearable
+                                    leftSection={<IconCalendar size={16} stroke={1.5} />}
+                                    leftSectionPointerEvents="none"
+                                    {...form.getInputProps("endDate")}
+                                    styles={{
+                                        input: { border: "1px solid var(--mantine-color-gray-3)" },
+                                    }}
+                                    locale={locale}
+                                />
+                            </Group>
 
-                    <Group justify="flex-end" mt="md">
-                        <Button variant="subtle" onClick={handleClose} disabled={isLoading}>
-                            {t("cancelButton")}
-                        </Button>
-                        <Button type="submit" loading={isLoading}>
-                            {initialData ? t("updateButton") : t("saveButton")}
-                        </Button>
-                    </Group>
-                </Stack>
-            </form>
+                            <Group justify="flex-end" mt="md">
+                                <Button variant="subtle" onClick={handleClose} disabled={isLoading}>
+                                    {t("cancelButton")}
+                                </Button>
+                                <Button type="submit" loading={isLoading}>
+                                    {initialData ? t("updateButton") : t("saveButton")}
+                                </Button>
+                            </Group>
+                        </Stack>
+                    </form>
+                </Card>
+            </Box>
         </Modal>
     );
 }

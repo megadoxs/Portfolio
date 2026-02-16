@@ -10,7 +10,7 @@ import ConfirmModal from "@/shared/ui/ConfirmModal";
 import { getAllTestimonials, Testimonial, TestimonialStatus } from "@/entities/testimonial";
 import { updateTestimonialStatus } from "@/entities/testimonial/api/updateTestimonialStatus";
 import { deleteTestimonial } from "@/entities/testimonial/api/deleteTestimonial";
-import TestimonialCard from "@/shared/ui/TestimonialsCard";
+import TestimonialCard from "@/shared/ui/TestimonialCard";
 
 export default function TestimonialsPage() {
     const t = useTranslations("testimonials");

@@ -1,12 +1,13 @@
 "use client";
 
-import { Modal, Stack, Button, Group, TextInput } from "@mantine/core";
+import { Modal, Stack, Button, Group, TextInput, Box, Card, Text } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useLocale, useTranslations } from "next-intl";
 import { Work, WorkRequestModel } from "@/entities/work";
 import { IconCalendar } from "@tabler/icons-react";
 import { useEffect } from "react";
+import { useMantineColorScheme } from "@mantine/core";
 import 'dayjs/locale/fr';
 
 interface WorkModalProps {
@@ -20,6 +21,8 @@ interface WorkModalProps {
 export default function WorkModal({ opened, onClose, onSubmit, isLoading, editWork }: WorkModalProps) {
     const t = useTranslations("work");
     const locale = useLocale();
+    const { colorScheme } = useMantineColorScheme();
+    const theme = colorScheme === 'dark' ? 'dark' : 'light';
 
     const form = useForm<WorkRequestModel>({
         initialValues: {
@@ -74,78 +77,91 @@ export default function WorkModal({ opened, onClose, onSubmit, isLoading, editWo
         <Modal
             opened={opened}
             onClose={handleClose}
-            title={editWork ? t("modalTitleEdit") : t("modalTitleAdd")}
+            title={<Text fw={700} size="lg">{editWork ? t("modalTitleEdit") : t("modalTitleAdd")}</Text>}
             size="lg"
+            centered
+            overlayProps={{
+                backgroundOpacity: 0.55,
+                blur: 3,
+            }}
+            styles={{
+                content: {
+                    backgroundColor: 'transparent',
+                },
+                header: {
+                    backgroundColor: 'transparent',
+                },
+                body: {
+                    padding: 0,
+                    overflow: 'hidden',
+                },
+            }}
         >
-            <form onSubmit={form.onSubmit(handleSubmit)}>
-                <Stack gap="md">
-                    <TextInput
-                        label={t("companyLabel")}
-                        placeholder={t("companyPlaceholder")}
-                        {...form.getInputProps("company")}
-                        required
-                    />
+            <Box className={`glowWrapper ${theme}`}>
+                <Card className={`glassCard ${theme}`} p="xl" radius="md">
+                    <form onSubmit={form.onSubmit(handleSubmit)}>
+                        <Stack gap="md">
+                            <TextInput
+                                label={t("companyLabel")}
+                                placeholder={t("companyPlaceholder")}
+                                {...form.getInputProps("company")}
+                                required
+                            />
 
-                    <TextInput
-                        label={t("positionLabel")}
-                        placeholder={t("positionPlaceholder")}
-                        {...form.getInputProps("position")}
-                        required
-                    />
+                            <TextInput
+                                label={t("positionLabel")}
+                                placeholder={t("positionPlaceholder")}
+                                {...form.getInputProps("position")}
+                                required
+                            />
 
-                    <Group grow align="flex-start">
-                        <DateInput
-                            label={t("startDateLabel")}
-                            placeholder={t("startDatePlaceholder")}
-                            radius="xl"
-                            valueFormat={dateFormat}
-                            leftSection={<IconCalendar size={16} stroke={1.5} />}
-                            leftSectionPointerEvents="none"
-                            value={form.values.startDate}
-                            onChange={(value) => {
-                                form.setFieldValue('startDate', value ? new Date(value) : new Date());
-                            }}
-                            error={form.errors.startDate}
-                            styles={{
-                                input: { border: "1px solid var(--mantine-color-gray-3)" },
-                            }}
-                            locale={locale}
-                            required
-                        />
+                            <Group grow align="flex-start">
+                                <DateInput
+                                    label={t("startDateLabel")}
+                                    placeholder={t("startDatePlaceholder")}
+                                    radius="xl"
+                                    valueFormat={dateFormat}
+                                    leftSection={<IconCalendar size={16} stroke={1.5} />}
+                                    leftSectionPointerEvents="none"
+                                    {...form.getInputProps("startDate")}
+                                    styles={{
+                                        input: { border: "1px solid var(--mantine-color-gray-3)" },
+                                    }}
+                                    locale={locale}
+                                    required
+                                />
 
-                        <DateInput
-                            label={t("endDateLabel")}
-                            placeholder={t("endDatePlaceholder")}
-                            radius="xl"
-                            valueFormat={dateFormat}
-                            clearable
-                            leftSection={<IconCalendar size={16} stroke={1.5} />}
-                            leftSectionPointerEvents="none"
-                            value={form.values.endDate}
-                            onChange={(value) => {
-                                form.setFieldValue('endDate', value ? new Date(value) : null);
-                            }}
-                            error={form.errors.endDate}
-                            styles={{
-                                input: { border: "1px solid var(--mantine-color-gray-3)" },
-                            }}
-                            locale={locale}
-                        />
-                    </Group>
+                                <DateInput
+                                    label={t("endDateLabel")}
+                                    placeholder={t("endDatePlaceholder")}
+                                    radius="xl"
+                                    valueFormat={dateFormat}
+                                    clearable
+                                    leftSection={<IconCalendar size={16} stroke={1.5} />}
+                                    leftSectionPointerEvents="none"
+                                    {...form.getInputProps("endDate")}
+                                    styles={{
+                                        input: { border: "1px solid var(--mantine-color-gray-3)" },
+                                    }}
+                                    locale={locale}
+                                />
+                            </Group>
 
-                    <Group justify="flex-end" mt="md">
-                        <Button variant="subtle" onClick={handleClose} disabled={isLoading}>
-                            {t("cancelButton")}
-                        </Button>
-                        <Button
-                            type="submit"
-                            loading={isLoading}
-                        >
-                            {editWork ? t("updateButton") : t("submitButton")}
-                        </Button>
-                    </Group>
-                </Stack>
-            </form>
+                            <Group justify="flex-end" mt="md">
+                                <Button variant="subtle" onClick={handleClose} disabled={isLoading}>
+                                    {t("cancelButton")}
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    loading={isLoading}
+                                >
+                                    {editWork ? t("updateButton") : t("submitButton")}
+                                </Button>
+                            </Group>
+                        </Stack>
+                    </form>
+                </Card>
+            </Box>
         </Modal>
     );
 }

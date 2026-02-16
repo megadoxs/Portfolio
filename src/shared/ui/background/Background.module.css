@@ -12,7 +12,7 @@
 
 /* Light mode background */
 .backgroundGradient.light {
-    background-color: #ffffff;
+    background: linear-gradient(180deg, #fefce8 0%, #ffffff 50%, #f0f9ff 100%);
 }
 
 /* Dark mode background */
@@ -54,20 +54,20 @@
     animation-delay: 14s;
 }
 
-/* Light mode gradients */
+/* Light mode gradients - More vibrant and saturated */
 .gradientBlob1.light {
-    background: linear-gradient(135deg, #a5b4fc 0%, #c4b5fd 100%);
-    opacity: 0.2;
+    background: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
+    opacity: 0.4;
 }
 
 .gradientBlob2.light {
-    background: linear-gradient(135deg, #fbcfe8 0%, #fca5a5 100%);
-    opacity: 0.2;
+    background: linear-gradient(135deg, #f9a8d4 0%, #fb7185 100%);
+    opacity: 0.35;
 }
 
 .gradientBlob3.light {
-    background: linear-gradient(135deg, #93c5fd 0%, #7dd3fc 100%);
-    opacity: 0.2;
+    background: linear-gradient(135deg, #60a5fa 0%, #22d3ee 100%);
+    opacity: 0.4;
 }
 
 /* Dark mode gradients */
@@ -152,21 +152,25 @@
     animation-delay: 15s;
 }
 
-/* Light mode shapes */
+/* Light mode shapes - Enhanced visibility */
 .shape1.light {
-    background: rgba(165, 180, 252, 0.12);
+    background: rgba(129, 140, 248, 0.2);
+    box-shadow: 0 0 60px rgba(129, 140, 248, 0.15);
 }
 
 .shape2.light {
-    background: rgba(252, 165, 165, 0.12);
+    background: rgba(251, 113, 133, 0.2);
+    box-shadow: 0 0 60px rgba(251, 113, 133, 0.15);
 }
 
 .shape3.light {
-    background: rgba(147, 197, 253, 0.12);
+    background: rgba(96, 165, 250, 0.2);
+    box-shadow: 0 0 60px rgba(96, 165, 250, 0.15);
 }
 
 .shape4.light {
-    background: rgba(251, 207, 232, 0.12);
+    background: rgba(249, 168, 212, 0.2);
+    box-shadow: 0 0 60px rgba(249, 168, 212, 0.15);
 }
 
 /* Dark mode shapes */

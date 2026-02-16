@@ -1,12 +1,12 @@
 "use client";
 
-import { Button, Container, Group, Text, Burger, Drawer, Stack, Box, Divider, ScrollArea, ActionIcon, useMantineColorScheme } from "@mantine/core";
+import { Button, Container, Group, Text, Burger, Drawer, Stack, Box, Divider, ScrollArea, ActionIcon, useMantineColorScheme, Menu } from "@mantine/core";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { usePathname, Link } from "@/src/shared/lib/i18n/navigation";
-import { useTransition, useEffect, useCallback } from "react";
+import { useTransition, useEffect, useCallback, useRef } from "react";
 import { useDisclosure } from "@mantine/hooks";
-import { IconSun, IconMoon } from "@tabler/icons-react";
+import { IconSun, IconMoon, IconChevronDown, IconCode, IconBriefcase, IconSchool, IconHeart, IconMessage, IconTrophy } from "@tabler/icons-react";
 
 export default function Navbar() {
     const t = useTranslations("navbar");
@@ -17,28 +17,181 @@ export default function Navbar() {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
+    const isLockedRef = useRef(false);
+    const targetSectionRef = useRef<string | null>(null);
+    const rafRef = useRef<number | null>(null);
+    const lockStartTimeRef = useRef<number>(0);
+
     const theme = colorScheme === 'dark' ? 'dark' : 'light';
 
     useEffect(() => {
         closeDrawer();
     }, [pathname, closeDrawer]);
 
+    // ONLY handle hash on page load when coming from another page
+    useEffect(() => {
+        const handleHashOnLoad = () => {
+            const hash = window.location.hash;
+            console.log('Page loaded, hash:', hash);
+
+            if (hash) {
+                const sectionId = hash.substring(1);
+                targetSectionRef.current = sectionId;
+                isLockedRef.current = true;
+                lockStartTimeRef.current = Date.now();
+
+                console.log('Starting lock for:', sectionId);
+
+                const scrollAndLock = () => {
+                    const element = document.getElementById(sectionId);
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                        setTimeout(() => {
+                            const lockLoop = () => {
+                                // Stop after 5 seconds max
+                                const elapsed = Date.now() - lockStartTimeRef.current;
+                                if (elapsed > 5000) {
+                                    console.log('Lock timeout - stopping after 5 seconds');
+                                    isLockedRef.current = false;
+                                    targetSectionRef.current = null;
+                                    if (rafRef.current) {
+                                        cancelAnimationFrame(rafRef.current);
+                                        rafRef.current = null;
+                                    }
+                                    return;
+                                }
+
+                                if (!isLockedRef.current || !targetSectionRef.current) {
+                                    console.log('Lock stopped');
+                                    return;
+                                }
+
+                                const el = document.getElementById(targetSectionRef.current);
+                                if (el) {
+                                    const rect = el.getBoundingClientRect();
+
+                                    if (Math.abs(rect.top) > 0.1) {
+                                        window.scrollTo({
+                                            top: window.scrollY + rect.top,
+                                            behavior: 'auto'
+                                        });
+                                        console.log('Adjusted - drift:', rect.top);
+                                    }
+                                }
+
+                                rafRef.current = requestAnimationFrame(lockLoop);
+                            };
+                            lockLoop();
+                        }, 600);
+                    } else {
+                        console.log('Element not found yet:', sectionId);
+                        setTimeout(scrollAndLock, 100);
+                    }
+                };
+
+                scrollAndLock();
+            }
+        };
+
+        handleHashOnLoad();
+
+        const timeouts = [
+            setTimeout(handleHashOnLoad, 100),
+            setTimeout(handleHashOnLoad, 300),
+            setTimeout(handleHashOnLoad, 500),
+            setTimeout(handleHashOnLoad, 1000)
+        ];
+
+        return () => {
+            timeouts.forEach(clearTimeout);
+            if (rafRef.current) {
+                cancelAnimationFrame(rafRef.current);
+            }
+        };
+    }, [pathname]);
+
+    // Detect user scroll and unlock
+    useEffect(() => {
+        const unlock = () => {
+            console.log('User scroll detected - unlocking');
+            isLockedRef.current = false;
+            targetSectionRef.current = null;
+            if (rafRef.current) {
+                cancelAnimationFrame(rafRef.current);
+                rafRef.current = null;
+            }
+        };
+
+        const handleInteraction = () => {
+            if (isLockedRef.current) {
+                unlock();
+            }
+        };
+
+        window.addEventListener('wheel', handleInteraction, { passive: true });
+        window.addEventListener('touchstart', handleInteraction, { passive: true });
+        window.addEventListener('touchmove', handleInteraction, { passive: true });
+        window.addEventListener('keydown', (e) => {
+            const scrollKeys = ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', ' ', 'Home', 'End'];
+            if (scrollKeys.includes(e.key) && isLockedRef.current) {
+                unlock();
+            }
+        });
+
+        return () => {
+            window.removeEventListener('wheel', handleInteraction);
+            window.removeEventListener('touchstart', handleInteraction);
+            window.removeEventListener('touchmove', handleInteraction);
+        };
+    }, []);
+
     const handleLanguageChange = useCallback((newLocale: string) => {
         if (newLocale !== currentLocale) {
             startTransition(() => {
-                router.push(`/${newLocale}${pathname}`);
+                const hash = window.location.hash;
+                router.push(`/${newLocale}${pathname}${hash}`);
             });
         }
     }, [currentLocale, pathname, router]);
 
-    const navLinks: Array<{
-        href: '/' | '/projects' | '/about' | '/contact';
-        label: string
-    }> = [
-        { href: "/", label: t("home") },
-        { href: "/projects", label: t("projects") },
-        { href: "/about", label: t("about") },
-        { href: "/contact", label: t("contact") },
+    const scrollToSection = (sectionId: string) => {
+        if (pathname === '/') {
+            // Already on home page - just scroll, DON'T lock
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, '', `#${sectionId}`);
+            }
+        } else {
+            // Navigating from another page - use window.location to preserve hash
+            window.location.href = `/${currentLocale}#${sectionId}`;
+        }
+        closeDrawer();
+    };
+
+    const handleHomeClick = () => {
+        if (pathname === '/') {
+            window.history.pushState(null, '', window.location.pathname);
+
+            const homeElement = document.getElementById('home');
+            if (homeElement) {
+                homeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        } else {
+            router.push('/');
+        }
+        closeDrawer();
+    };
+
+    const aboutSections = [
+        { id: 'skills', label: t("sections.skills"), icon: <IconCode size={16} /> },
+        { id: 'work', label: t("sections.work"), icon: <IconBriefcase size={16} /> },
+        { id: 'education', label: t("sections.education"), icon: <IconSchool size={16} /> },
+        { id: 'hobbies', label: t("sections.hobbies"), icon: <IconHeart size={16} /> },
+        { id: 'testimonials', label: t("sections.testimonials"), icon: <IconMessage size={16} /> },
     ];
 
     const textColor = colorScheme === "dark"
@@ -47,19 +200,76 @@ export default function Navbar() {
 
     const navigationButtons = (
         <Group gap="xs">
-            {navLinks.map((link) => (
-                <Button
-                    key={link.href}
-                    component={Link}
-                    href={link.href}
-                    variant="subtle"
-                    radius="xl"
-                    px="md"
-                    style={{ color: textColor }}
-                >
-                    {link.label}
-                </Button>
-            ))}
+            <Button
+                onClick={handleHomeClick}
+                variant="subtle"
+                radius="xl"
+                px="md"
+                style={{ color: textColor }}
+            >
+                {t("home")}
+            </Button>
+
+            <Button
+                onClick={() => scrollToSection('projects')}
+                variant="subtle"
+                radius="xl"
+                px="md"
+                style={{ color: textColor }}
+            >
+                {t("projects")}
+            </Button>
+
+            <Menu
+                shadow="md"
+                width={200}
+                styles={{
+                    dropdown: {
+                        backgroundColor: theme === 'dark'
+                            ? 'rgba(26, 27, 30, 0.85)'
+                            : 'rgba(255, 255, 255, 0.85)',
+                        backdropFilter: 'blur(10px)',
+                        border: theme === 'dark'
+                            ? '1px solid rgba(255, 255, 255, 0.1)'
+                            : '1px solid rgba(0, 0, 0, 0.1)',
+                        borderRadius: '12px',
+                    },
+                }}
+            >
+                <Menu.Target>
+                    <Button
+                        variant="subtle"
+                        radius="xl"
+                        px="md"
+                        rightSection={<IconChevronDown size={16} />}
+                        style={{ color: textColor }}
+                    >
+                        {t("about")}
+                    </Button>
+                </Menu.Target>
+
+                <Menu.Dropdown>
+                    {aboutSections.map((section) => (
+                        <Menu.Item
+                            key={section.id}
+                            leftSection={section.icon}
+                            onClick={() => scrollToSection(section.id)}
+                        >
+                            {section.label}
+                        </Menu.Item>
+                    ))}
+                </Menu.Dropdown>
+            </Menu>
+
+            <Button
+                onClick={() => scrollToSection('contact')}
+                variant="subtle"
+                radius="xl"
+                px="md"
+                style={{ color: textColor }}
+            >
+                {t("contact")}
+            </Button>
         </Group>
     );
 
@@ -119,12 +329,17 @@ export default function Navbar() {
             <Box component="header" className={`navbarGlass ${theme}`}>
                 <Container size="100%" py="md" px="xl">
                     <Group justify="space-between" align="center">
-                        {/* Logo */}
-                        <Text size="xl" fw={900} style={{ color: textColor }}>
-                            LC
-                        </Text>
+                        <Button
+                            onClick={handleHomeClick}
+                            variant="subtle"
+                            p={0}
+                            style={{ color: textColor }}
+                        >
+                            <Text size="xl" fw={900}>
+                                LC
+                            </Text>
+                        </Button>
 
-                        {/* Center Navigation - Desktop Only */}
                         <Box
                             visibleFrom="md"
                             style={{
@@ -136,13 +351,11 @@ export default function Navbar() {
                             {navigationButtons}
                         </Box>
 
-                        {/* Right Side Controls - Desktop Only */}
                         <Group gap="xs" visibleFrom="md">
                             {languageSelector}
                             {themeToggle}
                         </Group>
 
-                        {/* Mobile Menu Button */}
                         <Burger
                             opened={drawerOpened}
                             onClick={toggleDrawer}
@@ -153,7 +366,6 @@ export default function Navbar() {
                 </Container>
             </Box>
 
-            {/* Mobile Drawer */}
             <Drawer
                 opened={drawerOpened}
                 onClose={closeDrawer}
@@ -170,27 +382,61 @@ export default function Navbar() {
                 <ScrollArea h="calc(100vh - 80px)" mx="-md">
                     <Divider my="sm" />
 
-                    {/* Mobile Navigation Links */}
                     <Stack px="md" gap="xs">
-                        {navLinks.map((link) => (
+                        <Button
+                            onClick={handleHomeClick}
+                            variant="subtle"
+                            radius="xl"
+                            fullWidth
+                            justify="flex-start"
+                            style={{ color: textColor }}
+                        >
+                            {t("home")}
+                        </Button>
+
+                        <Button
+                            onClick={() => scrollToSection('projects')}
+                            variant="subtle"
+                            radius="xl"
+                            fullWidth
+                            justify="flex-start"
+                            style={{ color: textColor }}
+                        >
+                            {t("projects")}
+                        </Button>
+
+                        <Text size="sm" fw={600} mt="sm" mb="xs" px="md" c="dimmed">
+                            {t("about")}
+                        </Text>
+                        {aboutSections.map((section) => (
                             <Button
-                                key={link.href}
-                                component={Link}
-                                href={link.href}
+                                key={section.id}
+                                onClick={() => scrollToSection(section.id)}
                                 variant="subtle"
                                 radius="xl"
                                 fullWidth
                                 justify="flex-start"
-                                style={{ color: textColor }}
+                                leftSection={section.icon}
+                                style={{ color: textColor, paddingLeft: '2rem' }}
                             >
-                                {link.label}
+                                {section.label}
                             </Button>
                         ))}
+
+                        <Button
+                            onClick={() => scrollToSection('contact')}
+                            variant="subtle"
+                            radius="xl"
+                            fullWidth
+                            justify="flex-start"
+                            style={{ color: textColor }}
+                        >
+                            {t("contact")}
+                        </Button>
                     </Stack>
 
                     <Divider my="sm" />
 
-                    {/* Mobile Controls */}
                     <Stack px="md" gap="sm" pb="xl">
                         {languageSelector}
                         {themeToggle}

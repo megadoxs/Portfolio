@@ -6,7 +6,7 @@ import {useTranslations} from "next-intl";
 import {IconCode, IconPlus} from "@tabler/icons-react";
 
 import ProjectCard from "@/shared/ui/ProjectCard";
-import AddProjectModal from "./ui/AddProjectModal";
+import ProjectModal from "./ui/ProjectModal";
 import EmptyState from "@/shared/ui/EmptyState";
 import ConfirmModal from "@/shared/ui/ConfirmModal";
 import {
@@ -24,12 +24,12 @@ export default function ProjectsPage() {
     const { colorScheme } = useMantineColorScheme();
 
     const [modalOpen, setModalOpen] = useState(false);
-    const [editingProject, setEditingProject] = useState<Project | null>(null);
+    const [modalMode, setModalMode] = useState<'add' | 'update'>('add');
+    const [editingProject, setEditingProject] = useState<ProjectWithSkills | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<Project | null>(null);
     const [projects, setProjects] = useState<ProjectWithSkills[]>([]);
     const [isFetching, setIsFetching] = useState(true);
-    const [isCreating, setIsCreating] = useState(false);
-    const [isUpdating, setIsUpdating] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
     const theme = colorScheme === 'dark' ? 'dark' : 'light';
@@ -51,32 +51,40 @@ export default function ProjectsPage() {
     };
 
     const handleAdd = () => {
+        setModalMode('add');
         setEditingProject(null);
         setModalOpen(true);
     };
 
-    const handleEdit = (project: Project) => {
+    const handleEdit = (project: ProjectWithSkills) => {
+        setModalMode('update');
         setEditingProject(project);
         setModalOpen(true);
     };
 
-    const handleModalSubmit = async (project: ProjectRequestModel) => {
+    const handleModalSubmit = async (project: ProjectRequestModel & { skills: string[] }) => {
         try {
-            if (editingProject) {
-                setIsUpdating(true);
-                await updateProject(editingProject.id, project);
-            } else {
-                setIsCreating(true);
+            setIsSubmitting(true);
+
+            if (modalMode === 'add') {
                 await addProject(project);
+            } else if (editingProject) {
+                await updateProject(editingProject.id, project);
             }
+
             await fetchProjects();
             setModalOpen(false);
+            setEditingProject(null);
         } catch (error) {
-            console.error("Failed to save project:", error);
+            console.error(`Failed to ${modalMode} project:`, error);
         } finally {
-            setIsCreating(false);
-            setIsUpdating(false);
+            setIsSubmitting(false);
         }
+    };
+
+    const handleModalClose = () => {
+        setModalOpen(false);
+        setEditingProject(null);
     };
 
     const handleDeleteConfirm = async () => {
@@ -92,6 +100,10 @@ export default function ProjectsPage() {
                 setIsDeleting(false);
             }
         }
+    };
+
+    const getExistingRepoUrls = () => {
+        return projects.map(p => p.githubUrl);
     };
 
     if (isFetching) {
@@ -144,11 +156,14 @@ export default function ProjectsPage() {
                 )}
             </Stack>
 
-            <AddProjectModal
+            <ProjectModal
+                mode={modalMode}
                 opened={modalOpen}
-                onClose={() => setModalOpen(false)}
+                onClose={handleModalClose}
                 onSubmit={handleModalSubmit}
-                isLoading={isCreating || isUpdating}
+                isLoading={isSubmitting}
+                existingRepoUrls={getExistingRepoUrls()}
+                project={editingProject}
             />
 
             <ConfirmModal

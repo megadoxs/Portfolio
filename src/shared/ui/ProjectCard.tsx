@@ -1,11 +1,12 @@
 "use client";
 
-import { ActionIcon, Card, Group, Stack, Text, Tooltip, Button, useMantineColorScheme } from "@mantine/core";
-import { IconEdit, IconTrash, IconBrandGithub, IconCalendar } from "@tabler/icons-react";
+import { ActionIcon, Card, Group, Text, Tooltip, Button, useMantineColorScheme } from "@mantine/core";
+import { IconEdit, IconTrash, IconBrandGithub, IconCalendar, IconInfoCircle } from "@tabler/icons-react";
 import { ProjectWithSkills } from "@/entities/project";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { SkillPill } from "@/shared/ui/SkillPill";
+import ProjectDetailsModal from "./ProjectDetailsModal";
 
 interface ProjectCardProps {
     project: ProjectWithSkills;
@@ -29,7 +30,7 @@ const getStatusClass = (status: string): string => {
         'ACTIVE': 'active',
         'INACTIVE': 'inactive',
         'COMPLETED': 'completed',
-    };
+    }
     return statusMap[status] || 'inactive';
 };
 
@@ -66,6 +67,7 @@ export default function ProjectCard({ project, onEdit, onDelete }: ProjectCardPr
     const locale = useLocale();
     const { colorScheme } = useMantineColorScheme();
     const [languages, setLanguages] = useState<LanguageStats | null>(null);
+    const [modalOpened, setModalOpened] = useState(false);
 
     const theme = colorScheme === 'dark' ? 'dark' : 'light';
 
@@ -115,120 +117,181 @@ export default function ProjectCard({ project, onEdit, onDelete }: ProjectCardPr
 
     const showActions = onEdit || onDelete;
 
+    const maxVisibleSkills = 6;
+    const hasMoreSkills = project.skills && project.skills.length > maxVisibleSkills;
+    const visibleSkills = hasMoreSkills ? project.skills.slice(0, maxVisibleSkills - 1) : project.skills;
+
     return (
-        <div className={`glowWrapper glowWrapperSmall ${theme} projectCardWrapper`}>
-            <Card
-                shadow="sm"
-                radius="lg"
-                withBorder
-                p="md"
-                className={`glassCard ${theme} projectCard`}
-            >
-                <Stack gap="sm" justify="space-between" style={{ flex: 1 }}>
-                    {/* Title + status + date range */}
-                    <Group justify="space-between" align="flex-start" wrap="nowrap">
-                        <Text size="md" fw={700} c="gray.8" lineClamp={2} style={{ flex: 1, minWidth: 0 }}>
-                            {project.title}
-                        </Text>
-                        <Group gap={6} align="center" style={{ flexShrink: 0, marginLeft: 8 }}>
-                            <Text size="xs" className={`statusBadge ${getStatusClass(project.status)}`}>
-                                {project.status}
+        <>
+            <div className={`glowWrapper glowWrapperSmall ${theme} projectCardWrapper`} style={{ height: '100%' }}>
+                <Card
+                    shadow="sm"
+                    radius="lg"
+                    withBorder
+                    p="md"
+                    className={`glassCard ${theme} projectCard`}
+                    style={{ height: '100%' }}
+                >
+                    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                        <Group justify="space-between" align="flex-start" wrap="nowrap" mb="sm">
+                            <Text size="md" fw={700} lineClamp={2} style={{ flex: 1, minWidth: 0 }}>
+                                {project.title}
                             </Text>
-                            <IconCalendar size={13} color="var(--mantine-color-gray-5)" stroke={1.5} />
-                            <Text size="xs" c="gray.5" style={{ whiteSpace: "nowrap" }}>
-                                {dateRange}
-                            </Text>
+                            <Group gap={6} align="center" style={{ flexShrink: 0, marginLeft: 8 }}>
+                                <Text size="xs" className={`statusBadge ${getStatusClass(project.status)}`}>
+                                    {project.status}
+                                </Text>
+                                <IconCalendar size={13} color="var(--mantine-color-gray-5)" stroke={1.5} />
+                                <Text size="xs" c="gray.5" style={{ whiteSpace: "nowrap" }}>
+                                    {dateRange}
+                                </Text>
+                            </Group>
                         </Group>
-                    </Group>
 
-                    {/* Description */}
-                    <Text size="sm" c="gray.6" lineClamp={2}>
-                        {project.description}
-                    </Text>
+                        <Text size="sm" c="gray.6" lineClamp={2} style={{ minHeight: '2.8em' }} mb="sm">
+                            {project.description}
+                        </Text>
 
-                    {/* Language Stats */}
-                    {topLanguages.length > 0 && (
-                        <Stack gap={6}>
-                            <Text size="xs" fw={600} c="gray.7">
-                                {t('languages')}
-                            </Text>
-                            <Group gap={8}>
-                                {topLanguages.map((lang) => (
-                                    <Group gap={4} key={lang.name}>
-                                        <div className={`languageDot ${getLanguageClass(lang.name)}`} />
-                                        <Text size="xs" c="gray.6">
-                                            {lang.name} {lang.percentage}%
-                                        </Text>
-                                    </Group>
-                                ))}
-                            </Group>
-                        </Stack>
-                    )}
-
-                    {/* Skills */}
-                    {project.skills && project.skills.length > 0 && (
-                        <Stack gap={6}>
-                            <Text size="xs" fw={600} c="gray.7">
-                                {t('skills')}
-                            </Text>
-                            <Group gap={6}>
-                                {project.skills.map((skill) => (
-                                    <SkillPill key={skill.id} skill={skill} size="xs" />
-                                ))}
-                            </Group>
-                        </Stack>
-                    )}
-
-                    {/* Footer: GitHub button and actions */}
-                    <Group justify="space-between" align="center" mt="auto" pt="xs">
-                        <Button
-                            component="a"
-                            href={project.githubUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            size="xs"
-                            variant="default"
-                            leftSection={<IconBrandGithub size={16} />}
-                            radius="md"
-                            className={`glassButton ${theme}`}
-                        >
-                            {t('github')}
-                        </Button>
-
-                        {showActions && (
-                            <Group gap={4}>
-                                {onEdit && (
-                                    <Tooltip label={t('edit')} withArrow position="bottom">
-                                        <ActionIcon
-                                            variant="subtle"
-                                            radius="md"
-                                            size="sm"
-                                            color="gray.6"
-                                            onClick={() => onEdit(project)}
-                                        >
-                                            <IconEdit size={15} stroke={1.5} />
-                                        </ActionIcon>
-                                    </Tooltip>
-                                )}
-
-                                {onDelete && (
-                                    <Tooltip label={t('delete')} withArrow position="bottom">
-                                        <ActionIcon
-                                            variant="subtle"
-                                            radius="md"
-                                            size="sm"
-                                            color="red.5"
-                                            onClick={() => onDelete(project)}
-                                        >
-                                            <IconTrash size={15} stroke={1.5} />
-                                        </ActionIcon>
-                                    </Tooltip>
-                                )}
-                            </Group>
+                        {topLanguages.length > 0 && (
+                            <div style={{ marginBottom: '0.5rem' }}>
+                                <Text size="xs" fw={600} c="gray.7" mb={6}>
+                                    {t('languages')}
+                                </Text>
+                                <Group gap={8}>
+                                    {topLanguages.map((lang) => (
+                                        <Group gap={4} key={lang.name}>
+                                            <div className={`languageDot ${getLanguageClass(lang.name)}`} />
+                                            <Text size="xs" c="gray.6">
+                                                {lang.name} {lang.percentage}%
+                                            </Text>
+                                        </Group>
+                                    ))}
+                                </Group>
+                            </div>
                         )}
-                    </Group>
-                </Stack>
-            </Card>
-        </div>
+
+                        {project.skills && project.skills.length > 0 && (
+                            <div style={{ marginBottom: '0.5rem' }}>
+                                <Text size="xs" fw={600} c="gray.7" mb={6}>
+                                    {t('skills')}
+                                </Text>
+                                <div style={{
+                                    display: 'flex',
+                                    flexWrap: 'wrap',
+                                    gap: '6px',
+                                    maxHeight: '44px',
+                                    overflow: 'hidden',
+                                }}>
+                                    {visibleSkills?.map((skill) => (
+                                        <SkillPill key={skill.id} skill={skill} size="xs" />
+                                    ))}
+                                    {hasMoreSkills && (
+                                        <Tooltip label={t('viewAll')} withArrow>
+                                            <div
+                                                onClick={() => setModalOpened(true)}
+                                                style={{
+                                                    cursor: 'pointer',
+                                                    backgroundColor: 'var(--mantine-color-default)',
+                                                    border: '1px solid var(--mantine-color-default-border)',
+                                                    borderRadius: 'var(--mantine-radius-xl)',
+                                                    padding: '2px 10px',
+                                                    fontSize: '12px',
+                                                    fontWeight: 500,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    height: '22px',
+                                                    transition: 'background-color 0.2s ease',
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.backgroundColor = 'var(--mantine-color-default-hover)';
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.backgroundColor = 'var(--mantine-color-default)';
+                                                }}
+                                            >
+                                                +{project.skills.length - visibleSkills.length}
+                                            </div>
+                                        </Tooltip>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        <div style={{ flexGrow: 1 }} />
+
+                        <Group justify="space-between" align="center" pt="xs">
+                            <Group gap="xs">
+                                <Button
+                                    component="a"
+                                    href={project.githubUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    size="xs"
+                                    variant="default"
+                                    leftSection={<IconBrandGithub size={16} />}
+                                    radius="md"
+                                    className={`glassButton ${theme}`}
+                                >
+                                    {t('github')}
+                                </Button>
+                                <Tooltip label={t('details')} withArrow>
+                                    <ActionIcon
+                                        variant="subtle"
+                                        radius="md"
+                                        size="sm"
+                                        color="gray.6"
+                                        onClick={() => setModalOpened(true)}
+                                    >
+                                        <IconInfoCircle size={16} stroke={1.5} />
+                                    </ActionIcon>
+                                </Tooltip>
+                            </Group>
+
+                            {showActions && (
+                                <Group gap={4}>
+                                    {onEdit && (
+                                        <Tooltip label={t('edit')} withArrow position="bottom">
+                                            <ActionIcon
+                                                variant="subtle"
+                                                radius="md"
+                                                size="sm"
+                                                color="gray.6"
+                                                onClick={() => onEdit(project)}
+                                            >
+                                                <IconEdit size={15} stroke={1.5} />
+                                            </ActionIcon>
+                                        </Tooltip>
+                                    )}
+
+                                    {onDelete && (
+                                        <Tooltip label={t('delete')} withArrow position="bottom">
+                                            <ActionIcon
+                                                variant="subtle"
+                                                radius="md"
+                                                size="sm"
+                                                color="red.5"
+                                                onClick={() => onDelete(project)}
+                                            >
+                                                <IconTrash size={15} stroke={1.5} />
+                                            </ActionIcon>
+                                        </Tooltip>
+                                    )}
+                                </Group>
+                            )}
+                        </Group>
+                    </div>
+                </Card>
+            </div>
+
+            <ProjectDetailsModal
+                project={project}
+                opened={modalOpened}
+                onClose={() => setModalOpened(false)}
+                topLanguages={topLanguages}
+                dateRange={dateRange}
+                getStatusClass={getStatusClass}
+                getLanguageClass={getLanguageClass}
+            />
+        </>
     );
 }

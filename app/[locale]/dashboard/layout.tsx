@@ -1,15 +1,8 @@
 import {Box} from "@mantine/core";
 import Sidebar from "@/widgets/SideBar/Sidebar";
-import {auth0} from "@/shared/lib/auth0/auth0";
-import {redirect} from "next/navigation";
+import React from "react";
 
 export default async function DashboardLayout({children,}: { children: React.ReactNode; }) {
-    const session = await auth0.getSession();
-
-    if (!session) {
-        redirect('/auth/login')
-    }
-
     return (
         <Box style={{display: "flex"}}>
             <Sidebar/>

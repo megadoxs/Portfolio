@@ -1,9 +1,10 @@
 "use client";
 
-import { Card, Image, Text, Group, ActionIcon, Menu } from "@mantine/core";
-import {IconTrash, IconDots} from "@tabler/icons-react";
+import { Paper, Text, Group, ActionIcon, Menu, Stack, Box, useMantineColorScheme } from "@mantine/core";
+import { IconTrash, IconDots } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { Hobby } from "@/entities/hobby";
+import Image from "next/image";
 
 interface HobbyCardProps {
     hobby: Hobby;
@@ -12,48 +13,45 @@ interface HobbyCardProps {
 
 export default function HobbyCard({ hobby, onDelete }: HobbyCardProps) {
     const t = useTranslations("hobbies");
+    const { colorScheme } = useMantineColorScheme();
+    const theme = colorScheme === "dark" ? "dark" : "light";
 
     return (
-        <Card shadow="sm" padding="lg" radius="md" withBorder>
-            <Group justify="space-between" align="center" wrap="nowrap">
-                <Group gap="md" wrap="nowrap">
-                    <Image
-                        src={hobby.picture}
-                        alt={hobby.name}
-                        w={60}
-                        h={60}
-                        radius="50%"
-                        fit="cover"
-                    />
-                    <Text fw={600} size="lg">
-                        {hobby.name}
-                    </Text>
-                </Group>
-
+        <Box className={`glowWrapper glowWrapperSmall ${theme}`}>
+            <Paper className={`glassCard ${theme}`} p="lg" radius="md" style={{ position: "relative" }}>
                 {onDelete && (
-                    <Menu shadow="md" width={200} position="bottom-end">
-                        <Menu.Target>
-                            <ActionIcon
-                                variant="subtle"
-                                color="gray"
-                                aria-label="Options"
-                            >
-                                <IconDots size={18} />
-                            </ActionIcon>
-                        </Menu.Target>
+                    <Box style={{ position: "absolute", top: 8, right: 8 }}>
+                        <Menu shadow="md" width={200} position="bottom-end">
+                            <Menu.Target>
+                                <ActionIcon
+                                    variant="subtle"
+                                    color="gray"
+                                    aria-label="Options"
+                                    size="sm"
+                                >
+                                    <IconDots size={16} />
+                                </ActionIcon>
+                            </Menu.Target>
 
-                        <Menu.Dropdown>
-                            <Menu.Item
-                                color="red"
-                                leftSection={<IconTrash size={16} />}
-                                onClick={() => onDelete(hobby)}
-                            >
-                                {t("deleteButton")}
-                            </Menu.Item>
-                        </Menu.Dropdown>
-                    </Menu>
+                            <Menu.Dropdown>
+                                <Menu.Item
+                                    color="red"
+                                    leftSection={<IconTrash size={16} />}
+                                    onClick={() => onDelete(hobby)}
+                                >
+                                    {t("deleteButton")}
+                                </Menu.Item>
+                            </Menu.Dropdown>
+                        </Menu>
+                    </Box>
                 )}
-            </Group>
-        </Card>
+                <Stack gap="md" align="center">
+                    <Box style={{ position: "relative", width: 80, height: 80, borderRadius: "50%", overflow: "hidden" }}>
+                        <Image src={hobby.picture} alt={hobby.name} fill style={{ objectFit: "cover" }} />
+                    </Box>
+                    <Text fw={600} size="lg" ta="center">{hobby.name}</Text>
+                </Stack>
+            </Paper>
+        </Box>
     );
 }

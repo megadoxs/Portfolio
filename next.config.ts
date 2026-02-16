@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
                 hostname: 'skillicons.dev',
                 pathname: '/icons/**',
             },
+            {
+                protocol: 'https',
+                hostname: '65pm3kzfchespv7j.public.blob.vercel-storage.com',
+                pathname: '/**',
+            },
         ],
         dangerouslyAllowSVG: true,
         contentDispositionType: 'attachment',

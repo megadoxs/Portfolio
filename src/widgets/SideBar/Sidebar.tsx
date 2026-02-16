@@ -40,8 +40,8 @@ export default function Sidebar() {
         { href: "/dashboard", label: t("overview"), icon: IconChartBar },
         { href: "/dashboard/education", label: t("education"), icon: IconSchool },
         { href: "/dashboard/work", label: t("work"), icon: IconBriefcase },
-        { href: "/dashboard/projects", label: t("projects"), icon: IconCode },
-        { href: "/dashboard/skills", label: t("skills"), icon: IconTrophy },
+        { href: "/dashboard/projects", label: t("projects"), icon: IconTrophy },
+        { href: "/dashboard/skills", label: t("skills"), icon: IconCode },
         { href: "/dashboard/hobbies", label: t("hobbies"), icon: IconHeart },
         { href: "/dashboard/testimonials", label: t("testimonials"), icon: IconMessage },
         { href: "/dashboard/resume", label: t("resume"), icon: IconFileText },
@@ -144,10 +144,10 @@ export default function Sidebar() {
                                 </Avatar>
                                 <Box style={{ flex: 1, overflow: "hidden" }}>
                                     <Text size="sm" fw={600} truncate>
-                                        {user?.name || t("guestUser")}
+                                        {user?.name}
                                     </Text>
                                     <Text size="xs" c="dimmed" truncate>
-                                        {user?.email || t("guestEmail")}
+                                        {user?.email}
                                     </Text>
                                 </Box>
                             </Group>
@@ -155,20 +155,6 @@ export default function Sidebar() {
                     </Menu.Target>
 
                     <Menu.Dropdown>
-                        <Menu.Label>{t("account")}</Menu.Label>
-                        <Menu.Item
-                            leftSection={<IconUser size={16} stroke={1.5} />}
-                        >
-                            {t("profile")}
-                        </Menu.Item>
-                        <Menu.Item
-                            leftSection={<IconSettings size={16} stroke={1.5} />}
-                        >
-                            {t("settings")}
-                        </Menu.Item>
-
-                        <Menu.Divider />
-
                         <Menu.Item
                             component="a"
                             href="/auth/logout"

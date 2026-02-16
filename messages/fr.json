@@ -12,11 +12,58 @@
     "projects": "Projets",
     "about": "À propos",
     "contact": "Contact",
-    "resume": "CV"
+    "sections": {
+      "work": "Expérience Professionnelle",
+      "education": "Formation",
+      "skills": "Compétences",
+      "hobbies": "Loisirs & Intérêts",
+      "testimonials": "Témoignages"
+    }
   },
   "home": {
     "title": "Développeur Full Stack",
-    "slogan": "Créer des logiciels de qualité qui durent."
+    "slogan": "Créer des logiciels de qualité qui durent.",
+    "buttons": {
+      "github": "GitHub",
+      "linkedin": "LinkedIn",
+      "resume": "CV"
+    },
+    "sections": {
+      "projects": "Projets",
+      "work": "Expérience Professionnelle",
+      "education": "Formation",
+      "skills": "Compétences",
+      "hobbies": "Loisirs & Intérêts",
+      "testimonials": "Témoignages",
+      "leaveTestimonial": "Laisser un Témoignage",
+      "testimonialDescription": "Partagez votre expérience de travail avec moi",
+      "contact": "Me Contacter",
+      "contactDescription": "Vous avez un projet en tête ? Travaillons ensemble pour donner vie à vos idées."
+    },
+    "skills": {
+      "language": "Langages",
+      "framework": "Frameworks",
+      "software": "Logiciels",
+      "database": "Bases de données"
+    },
+    "form": {
+      "name": "Votre Nom",
+      "namePlaceholder": "Jean Dupont",
+      "email": "Courriel",
+      "emailPlaceholder": "jean@exemple.com",
+      "message": "Message",
+      "messagePlaceholder": "Parlez-moi de votre projet...",
+      "testimonial": "Votre Témoignage",
+      "testimonialPlaceholder": "Partagez votre expérience de travail avec moi...",
+      "testimonialTooLong": "Le témoignage doit contenir 512 caractères ou moins",
+      "submit": "Soumettre le Témoignage",
+      "sendMessage": "Envoyer le Message",
+      "success": "Succès",
+      "error": "Erreur",
+      "testimonialSuccess": "Merci ! Votre témoignage a été soumis et est en attente d'approbation.",
+      "rateLimitExceeded": "Vous avez soumis trop de témoignages. Veuillez réessayer dans une heure.",
+      "serverError": "Une erreur s'est produite. Veuillez réessayer plus tard."
+    }
   },
   "sidebar": {
     "dashboard": "Tableau de bord",
@@ -109,7 +156,10 @@
       "delete": "Supprimer",
       "languages": "Langages",
       "skills": "Compétences",
-      "github": "Voir sur GitHub"
+      "github": "Voir sur GitHub",
+      "details": "Voir en Détails",
+      "description": "Description",
+      "viewAll": "Voir toutes les compétences"
     },
     "addProjectModal": {
       "title": "Nouveau projet",
@@ -256,6 +306,14 @@
     "title": "Témoignages",
     "emptyTitle": "Aucun témoignage pour le moment",
     "emptyDesc": "Les témoignages de vos clients apparaîtront ici",
+    "approveButton": "Approuver",
+    "denyButton": "Refuser",
+    "deleteButton": "Supprimer",
+    "status": {
+      "APPROVED": "Approuvé",
+      "PENDING": "En attente",
+      "DENIED": "Refusé"
+    },
     "deleteTitle": "Supprimer le témoignage",
     "deleteMessage": "Êtes-vous sûr de vouloir supprimer ce témoignage ?"
   },
