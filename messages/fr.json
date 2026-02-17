@@ -171,7 +171,7 @@
         "COMPLETED": "Terminé"
       }
     },
-    "addProjectModal": {
+    "projectModal": {
       "title": "Nouveau projet",
       "steps": {
         "repository": {
@@ -240,6 +240,7 @@
         "next": "Suivant",
         "back": "Retour",
         "create": "Créer le projet",
+        "update": "Modifier le projet",
         "createSkill": "Créer une compétence"
       },
       "validation": {

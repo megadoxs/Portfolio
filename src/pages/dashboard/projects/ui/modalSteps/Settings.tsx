@@ -14,6 +14,7 @@ interface SettingsStepProps {
     onBack: () => void;
     onCancel: () => void;
     onSubmit: () => void;
+    mode: 'add' | 'update';
 }
 
 const stringToDate = (dateString: string | null | undefined): Date | null => {
@@ -30,6 +31,7 @@ export default function SettingsStep({
                                          onBack,
                                          onCancel,
                                          onSubmit,
+                                         mode,
                                      }: SettingsStepProps) {
     const statusOptions = [
         { value: ProjectStatus.ACTIVE, label: t("status.active") },
@@ -163,7 +165,7 @@ export default function SettingsStep({
                     loading={isLoading}
                     onClick={onSubmit}
                 >
-                    {t("buttons.create")}
+                    {mode === 'update' ? t("buttons.update") : t("buttons.create")}
                 </Button>
             </Group>
         </Stack>

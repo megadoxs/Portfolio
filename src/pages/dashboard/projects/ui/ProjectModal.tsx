@@ -50,7 +50,7 @@ export default function ProjectModal({
                                          project = null,
                                          mode
                                      }: ProjectModalProps) {
-    const t = useTranslations("projects.addProjectModal");
+    const t = useTranslations("projects.projectModal");
     const locale = useLocale();
     const { colorScheme } = useMantineColorScheme();
     const theme = colorScheme === 'dark' ? 'dark' : 'light';
@@ -503,6 +503,7 @@ export default function ProjectModal({
                                     onBack={handlePrevStep}
                                     onCancel={handleClose}
                                     onSubmit={() => handleSubmit(form.values)}
+                                    mode={mode}
                                 />
                             )}
                         </form>

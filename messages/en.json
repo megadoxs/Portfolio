@@ -171,7 +171,7 @@
         "COMPLETED": "Completed"
       }
     },
-    "addProjectModal": {
+    "projectModal": {
       "title": "New Project",
       "steps": {
         "repository": {
@@ -240,6 +240,7 @@
         "next": "Next",
         "back": "Back",
         "create": "Create Project",
+        "update": "Update Project",
         "createSkill": "Create Skill"
       },
       "validation": {
