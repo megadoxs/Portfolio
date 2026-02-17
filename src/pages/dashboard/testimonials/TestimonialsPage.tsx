@@ -1,6 +1,6 @@
 "use client";
 
-import { Container, Grid, Loader, Stack, Text } from "@mantine/core";
+import {Container, Grid, Loader, Stack, Text, useMantineColorScheme} from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { IconMessageCircle } from "@tabler/icons-react";
@@ -14,6 +14,7 @@ import TestimonialCard from "@/shared/ui/TestimonialCard";
 
 export default function TestimonialsPage() {
     const t = useTranslations("testimonials");
+    const { colorScheme } = useMantineColorScheme();
 
     const [deleteTarget, setDeleteTarget] = useState<Testimonial | null>(null);
     const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
@@ -89,7 +90,7 @@ export default function TestimonialsPage() {
     return (
         <Container size="100%" py="xl" px="xl">
             <Stack gap="lg">
-                <Text size="xl" fw={800} c="gray.8">
+                <Text size="xl" fw={800} style={{ color: colorScheme === 'dark' ? 'var(--mantine-color-white)' : 'var(--mantine-color-black)' }}>
                     {t("title")}
                 </Text>
 

@@ -6,7 +6,8 @@ import { ProjectWithSkills } from "@/entities/project";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { SkillPill } from "@/shared/ui/SkillPill";
-import ProjectDetailsModal from "./ProjectDetailsModal";
+import ProjectDetailsModal from "@/pages/dashboard/projects/ui/ProjectDetailsModal";
+import dayjs from "dayjs";
 
 interface ProjectCardProps {
     project: ProjectWithSkills;
@@ -18,11 +19,9 @@ interface LanguageStats {
     [key: string]: number;
 }
 
-function formatMonth(date: string | Date, locale: string): string {
-    return new Date(date).toLocaleDateString(locale, {
-        month: "short",
-        year: "numeric",
-    });
+function formatMonth(dateString: string, locale: string): string {
+    dayjs.locale(locale);
+    return dayjs(dateString, "YYYY-MM").format("MMM YYYY");
 }
 
 const getStatusClass = (status: string): string => {
@@ -30,7 +29,7 @@ const getStatusClass = (status: string): string => {
         'ACTIVE': 'active',
         'INACTIVE': 'inactive',
         'COMPLETED': 'completed',
-    }
+    };
     return statusMap[status] || 'inactive';
 };
 
@@ -71,17 +70,17 @@ export default function ProjectCard({ project, onEdit, onDelete }: ProjectCardPr
 
     const theme = colorScheme === 'dark' ? 'dark' : 'light';
 
+    const description = locale === "fr" ? project.description_fr : project.description_en;
+
     useEffect(() => {
         const fetchLanguages = async () => {
             try {
                 const url = new URL(project.githubUrl);
                 const pathParts = url.pathname.split('/').filter(part => part.length > 0);
-
                 if (pathParts.length < 2) return;
 
                 const [owner, repo] = pathParts;
                 const repoName = repo.replace(/\.git$/, '');
-
                 const response = await fetch(`https://api.github.com/repos/${owner}/${repoName}/languages`);
 
                 if (response.ok) {
@@ -98,9 +97,7 @@ export default function ProjectCard({ project, onEdit, onDelete }: ProjectCardPr
 
     const getTopLanguages = () => {
         if (!languages) return [];
-
         const total = Object.values(languages).reduce((sum, bytes) => sum + bytes, 0);
-
         return Object.entries(languages)
             .map(([name, bytes]) => ({
                 name,
@@ -116,14 +113,13 @@ export default function ProjectCard({ project, onEdit, onDelete }: ProjectCardPr
     const dateRange = `${startLabel} – ${endLabel}`;
 
     const showActions = onEdit || onDelete;
-
     const maxVisibleSkills = 6;
     const hasMoreSkills = project.skills && project.skills.length > maxVisibleSkills;
     const visibleSkills = hasMoreSkills ? project.skills.slice(0, maxVisibleSkills - 1) : project.skills;
 
     return (
         <>
-            <div className={`glowWrapper glowWrapperSmall ${theme} projectCardWrapper`} style={{ height: '100%' }}>
+            <div className={`glowWrapper glowWrapperSmall ${theme} projectCardWrapper`} style={{ height: '100%', minWidth: '360px' }}>
                 <Card
                     shadow="sm"
                     radius="lg"
@@ -133,35 +129,35 @@ export default function ProjectCard({ project, onEdit, onDelete }: ProjectCardPr
                     style={{ height: '100%' }}
                 >
                     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                        <Group justify="space-between" align="flex-start" wrap="nowrap" mb="sm">
-                            <Text size="md" fw={700} lineClamp={2} style={{ flex: 1, minWidth: 0 }}>
+                        <Group justify="space-between" align="flex-start" wrap="wrap" mb="sm" style={{ gap: '8px' }}>
+                            <Text size="md" fw={700} lineClamp={2} style={{ flex: '1 1 auto', minWidth: '150px' }}>
                                 {project.title}
                             </Text>
-                            <Group gap={6} align="center" style={{ flexShrink: 0, marginLeft: 8 }}>
+                            <Group gap={6} align="center" style={{ flexShrink: 0, flexWrap: 'wrap' }}>
                                 <Text size="xs" className={`statusBadge ${getStatusClass(project.status)}`}>
-                                    {project.status}
+                                    {t(`status.${project.status}`)}
                                 </Text>
-                                <IconCalendar size={13} color="var(--mantine-color-gray-5)" stroke={1.5} />
-                                <Text size="xs" c="gray.5" style={{ whiteSpace: "nowrap" }}>
-                                    {dateRange}
-                                </Text>
+                                <Group gap={4} style={{ flexWrap: 'nowrap' }}>
+                                    <IconCalendar size={13} color="var(--mantine-color-gray-5)" stroke={1.5} />
+                                    <Text size="xs" c="gray.5" style={{ whiteSpace: "nowrap" }}>
+                                        {dateRange}
+                                    </Text>
+                                </Group>
                             </Group>
                         </Group>
 
                         <Text size="sm" c="gray.6" lineClamp={2} style={{ minHeight: '2.8em' }} mb="sm">
-                            {project.description}
+                            {description}
                         </Text>
 
                         {topLanguages.length > 0 && (
                             <div style={{ marginBottom: '0.5rem' }}>
-                                <Text size="xs" fw={600} c="gray.7" mb={6}>
-                                    {t('languages')}
-                                </Text>
-                                <Group gap={8}>
+                                <Text size="xs" fw={600} c="gray.7" mb={6}>{t('languages')}</Text>
+                                <Group gap={8} style={{ flexWrap: 'wrap' }}>
                                     {topLanguages.map((lang) => (
-                                        <Group gap={4} key={lang.name}>
+                                        <Group gap={4} key={lang.name} style={{ flexWrap: 'nowrap' }}>
                                             <div className={`languageDot ${getLanguageClass(lang.name)}`} />
-                                            <Text size="xs" c="gray.6">
+                                            <Text size="xs" c="gray.6" style={{ whiteSpace: 'nowrap' }}>
                                                 {lang.name} {lang.percentage}%
                                             </Text>
                                         </Group>
@@ -172,9 +168,7 @@ export default function ProjectCard({ project, onEdit, onDelete }: ProjectCardPr
 
                         {project.skills && project.skills.length > 0 && (
                             <div style={{ marginBottom: '0.5rem' }}>
-                                <Text size="xs" fw={600} c="gray.7" mb={6}>
-                                    {t('skills')}
-                                </Text>
+                                <Text size="xs" fw={600} c="gray.7" mb={6}>{t('skills')}</Text>
                                 <div style={{
                                     display: 'flex',
                                     flexWrap: 'wrap',
@@ -219,8 +213,8 @@ export default function ProjectCard({ project, onEdit, onDelete }: ProjectCardPr
 
                         <div style={{ flexGrow: 1 }} />
 
-                        <Group justify="space-between" align="center" pt="xs">
-                            <Group gap="xs">
+                        <Group justify="space-between" align="center" pt="xs" style={{ flexWrap: 'wrap', gap: '8px' }}>
+                            <Group gap="xs" style={{ flexWrap: 'wrap' }}>
                                 <Button
                                     component="a"
                                     href={project.githubUrl}
@@ -235,13 +229,7 @@ export default function ProjectCard({ project, onEdit, onDelete }: ProjectCardPr
                                     {t('github')}
                                 </Button>
                                 <Tooltip label={t('details')} withArrow>
-                                    <ActionIcon
-                                        variant="subtle"
-                                        radius="md"
-                                        size="sm"
-                                        color="gray.6"
-                                        onClick={() => setModalOpened(true)}
-                                    >
+                                    <ActionIcon variant="subtle" radius="md" size="sm" color="gray.6" onClick={() => setModalOpened(true)}>
                                         <IconInfoCircle size={16} stroke={1.5} />
                                     </ActionIcon>
                                 </Tooltip>
@@ -251,27 +239,14 @@ export default function ProjectCard({ project, onEdit, onDelete }: ProjectCardPr
                                 <Group gap={4}>
                                     {onEdit && (
                                         <Tooltip label={t('edit')} withArrow position="bottom">
-                                            <ActionIcon
-                                                variant="subtle"
-                                                radius="md"
-                                                size="sm"
-                                                color="gray.6"
-                                                onClick={() => onEdit(project)}
-                                            >
+                                            <ActionIcon variant="subtle" radius="md" size="sm" color="gray.6" onClick={() => onEdit(project)}>
                                                 <IconEdit size={15} stroke={1.5} />
                                             </ActionIcon>
                                         </Tooltip>
                                     )}
-
                                     {onDelete && (
                                         <Tooltip label={t('delete')} withArrow position="bottom">
-                                            <ActionIcon
-                                                variant="subtle"
-                                                radius="md"
-                                                size="sm"
-                                                color="red.5"
-                                                onClick={() => onDelete(project)}
-                                            >
+                                            <ActionIcon variant="subtle" radius="md" size="sm" color="red.5" onClick={() => onDelete(project)}>
                                                 <IconTrash size={15} stroke={1.5} />
                                             </ActionIcon>
                                         </Tooltip>

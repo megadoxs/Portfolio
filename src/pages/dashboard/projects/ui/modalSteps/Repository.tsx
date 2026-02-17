@@ -1,7 +1,7 @@
 import { Button, Combobox, Group, Loader, Stack, TextInput, useCombobox } from "@mantine/core";
 import { IconBrandGithub } from "@tabler/icons-react";
 import { UseFormReturnType } from "@mantine/form";
-import { ProjectRequestModel } from "@/entities/project";
+import {ProjectFormValues} from "@/entities/project";
 
 interface GitHubRepo {
     full_name: string;
@@ -11,7 +11,7 @@ interface GitHubRepo {
 }
 
 interface RepositoryStepProps {
-    form: UseFormReturnType<ProjectRequestModel & { active: boolean }>;
+    form: UseFormReturnType<ProjectFormValues & { active: boolean }>;
     githubRepos: GitHubRepo[];
     isLoadingRepos: boolean;
     isValidatingRepo: boolean;

@@ -16,16 +16,19 @@ model Contact {
 model Education {
   id            String      @id     @default(cuid())
   institution   String
-  degree        String?
-  fieldOfStudy  String?
+  degree_en     String?
+  degree_fr     String?
+  fieldOfStudy_en String?
+  fieldOfStudy_fr String?
   iconType      String
-  startDate     DateTime
-  endDate       DateTime
+  startDate     String
+  endDate       String
 }
 
 model Hobby {
   id        String      @id     @default(cuid())
-  name      String
+  name_en   String
+  name_fr   String
   picture   String
 
   @@map("hobbies")
@@ -39,13 +42,14 @@ enum ProjectStatus {
 
 model Project {
   id            String      @id     @default(cuid())
-  title         String
-  description   String
+  title      String
+  description_en String
+  description_fr String
   status        ProjectStatus
   githubUrl     String      @unique
   active        Boolean
-  startDate     DateTime    @db.Date
-  endDate       DateTime?   @db.Date
+  startDate     String
+  endDate       String?
   skills        Skill[]
 
   @@map("projects")
@@ -63,8 +67,8 @@ model Resume {
 }
 
 model Skill {
-  id        String      @id     @default(cuid())
-  name      String      @unique
+  id        String        @id     @default(cuid())
+  name      String        @unique
   category  SkillCategory
   icon      String?
   projects  Project[]
@@ -98,9 +102,10 @@ enum TestimonialStatus {
 model Work {
   id        String      @id     @default(cuid())
   company   String
-  position  String
-  startDate DateTime
-  endDate   DateTime?
+  position_en String
+  position_fr String
+  startDate String
+  endDate   String?
 
   @@map("works")
 }

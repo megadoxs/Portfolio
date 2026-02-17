@@ -3,7 +3,7 @@
 import { Modal, Card, Stack, Group, Text, Button, useMantineColorScheme, Box } from "@mantine/core";
 import { IconBrandGithub, IconCalendar } from "@tabler/icons-react";
 import { ProjectWithSkills } from "@/entities/project";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { SkillPill } from "@/shared/ui/SkillPill";
 
 interface ProjectDetailsModalProps {
@@ -26,8 +26,11 @@ export default function ProjectDetailsModal({
                                                 getLanguageClass,
                                             }: ProjectDetailsModalProps) {
     const t = useTranslations("projects.projectCard");
+    const locale = useLocale();
     const { colorScheme } = useMantineColorScheme();
     const theme = colorScheme === 'dark' ? 'dark' : 'light';
+
+    const description = locale === "fr" ? project.description_fr : project.description_en;
 
     return (
         <Modal
@@ -41,16 +44,9 @@ export default function ProjectDetailsModal({
                 blur: 3,
             }}
             styles={{
-                content: {
-                    backgroundColor: 'transparent',
-                },
-                header: {
-                    backgroundColor: 'transparent',
-                },
-                body: {
-                    padding: 0,
-                    overflow: 'hidden',
-                },
+                content: { backgroundColor: 'transparent' },
+                header: { backgroundColor: 'transparent' },
+                body: { padding: 0, overflow: 'hidden' },
             }}
         >
             <Box className={`glowWrapper ${theme}`}>
@@ -71,7 +67,7 @@ export default function ProjectDetailsModal({
                         <Box>
                             <Text size="sm" fw={600} mb="xs">{t('description')}</Text>
                             <Text size="sm" c="gray.6">
-                                {project.description}
+                                {description}
                             </Text>
                         </Box>
 

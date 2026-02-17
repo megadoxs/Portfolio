@@ -15,16 +15,18 @@ export async function updateHobby(hobbyId: string, request: HobbyRequestModel): 
             return false;
         }
 
-        const updateData: { name?: string; picture?: string } = {};
+        const updateData: Prisma.HobbyUpdateInput = {};
 
-        if (request.name) {
-            updateData.name = request.name;
+        if (request.name_fr) {
+            updateData.name_fr = request.name_fr;
+        }
+
+        if (request.name_en) {
+            updateData.name_en = request.name_en;
         }
 
         if (request.file) {
-            const blob = await put(`hobbies/${Date.now()}.${request.file.type.split('/')[1]}`, request.file, {
-                access: "public",
-            });
+            const blob = await put(`hobbies/${Date.now()}.${request.file.type.split('/')[1]}`, request.file, { access: "public" });
 
             updateData.picture = blob.url;
 

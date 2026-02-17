@@ -110,7 +110,7 @@ export default function ResumesPage() {
         <Container size="100%" py="xl" px="xl">
             <Stack gap="lg">
                 <Group justify="space-between" align="center">
-                    <Text size="xl" fw={800} c="gray.8">
+                    <Text size="xl" fw={800} style={{ color: colorScheme === 'dark' ? 'var(--mantine-color-white)' : 'var(--mantine-color-black)' }}>
                         {t("title")}
                     </Text>
                     <Button

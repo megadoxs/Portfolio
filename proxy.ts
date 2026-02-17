@@ -13,6 +13,9 @@ export default async function proxy(request: NextRequest) {
     const localePattern = new RegExp(`^/(${routing.locales.join('|')})/`);
     const pathWithoutLocale = request.nextUrl.pathname.replace(localePattern, '/');
 
+    const localeMatch = request.nextUrl.pathname.match(localePattern);
+    const locale = localeMatch ? localeMatch[1] : routing.defaultLocale;
+
     if (pathWithoutLocale.startsWith("/dashboard")) {
         const session = await auth0.getSession();
 
@@ -21,6 +24,7 @@ export default async function proxy(request: NextRequest) {
             const returnTo = pathname + search;
             const loginUrl = new URL('/auth/login', request.url);
             loginUrl.searchParams.set('returnTo', returnTo);
+            loginUrl.searchParams.set('ui_locales', locale);
             return NextResponse.redirect(loginUrl);
         }
     }

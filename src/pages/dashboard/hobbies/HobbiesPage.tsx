@@ -1,6 +1,6 @@
 "use client";
 
-import {Button, Container, Grid, Loader, Stack, Text, Group, useMantineColorScheme} from "@mantine/core";
+import {Button, Container, Loader, Stack, Text, Group, useMantineColorScheme} from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { IconHeart, IconPlus } from "@tabler/icons-react";
@@ -86,7 +86,7 @@ export default function HobbiesPage() {
         <Container size="100%" py="xl" px="xl">
             <Stack gap="lg">
                 <Group justify="space-between" align="center">
-                    <Text size="xl" fw={800} c="gray.8">
+                    <Text size="xl" fw={800} style={{ color: colorScheme === 'dark' ? 'var(--mantine-color-white)' : 'var(--mantine-color-black)' }}>
                         {t("title")}
                     </Text>
                     <Button
@@ -108,16 +108,21 @@ export default function HobbiesPage() {
                         description={t("emptyDesc")}
                     />
                 ) : (
-                    <Grid>
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                        gap: 'var(--mantine-spacing-lg)',
+                        width: '100%'
+                    }}>
                         {hobbies.map((hobby) => (
-                            <Grid.Col key={hobby.id} span={{ base: 12, sm: 6, md: 4, lg: 3 }}>
+                            <div key={hobby.id}>
                                 <HobbyCard
                                     hobby={hobby}
                                     onDelete={setDeleteTarget}
                                 />
-                            </Grid.Col>
+                            </div>
                         ))}
-                    </Grid>
+                    </div>
                 )}
             </Stack>
 

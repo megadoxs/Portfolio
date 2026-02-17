@@ -3,11 +3,12 @@
 import { Modal, Stepper, Text, Box, Card } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
-import { ProjectRequestModel, ProjectStatus, ProjectWithSkills } from "@/entities/project";
+import {ProjectFormValues, ProjectRequestModel, ProjectStatus, ProjectWithSkills} from "@/entities/project";
 import { getContact } from "@/entities/contact";
 import { getAllSkills, Skill, addSkill } from "@/entities/skill";
 import { useLocale, useTranslations } from "next-intl";
 import { useMantineColorScheme } from "@mantine/core";
+import dayjs from 'dayjs';
 import 'dayjs/locale/fr';
 import RepositoryStep from "./modalSteps/Repository";
 import DetailsStep from "./modalSteps/Details";
@@ -15,6 +16,7 @@ import SkillsStep from "./modalSteps/Skills";
 import SettingsStep from "./modalSteps/Settings";
 import { SkillRequestModel } from "@/entities/skill";
 import SkillModal from "@/pages/dashboard/skills/ui/SkillModal";
+import { useTranslate } from "@/shared/lib/translate/useTranslate";
 
 interface ProjectModalProps {
     opened: boolean;
@@ -52,6 +54,7 @@ export default function ProjectModal({
     const locale = useLocale();
     const { colorScheme } = useMantineColorScheme();
     const theme = colorScheme === 'dark' ? 'dark' : 'light';
+    const { translateFields, isTranslating } = useTranslate();
 
     const [isValidatingRepo, setIsValidatingRepo] = useState(false);
     const [activeStep, setActiveStep] = useState(0);
@@ -70,26 +73,23 @@ export default function ProjectModal({
 
     const isUpdateMode = mode === 'update';
 
-    const form = useForm<ProjectRequestModel & { active: boolean }>({
+    const form = useForm<ProjectFormValues>({
         initialValues: {
             title: "",
             description: "",
             githubUrl: "",
             status: ProjectStatus.ACTIVE,
             active: true,
-            startDate: new Date(),
+            startDate: "",
             endDate: null,
         },
         validate: {
             title: (value) => (!value.trim() ? t("validation.titleRequired") : null),
             description: (value) => (!value.trim() ? t("validation.descriptionRequired") : null),
             githubUrl: (value) => {
-                // Skip validation in update mode
                 if (isUpdateMode) return null;
-
                 if (!value.trim()) return t("validation.githubUrlRequired");
 
-                // Normalize URL for comparison
                 const normalizeUrl = (url: string) => {
                     try {
                         const urlObj = new URL(url);
@@ -100,40 +100,32 @@ export default function ProjectModal({
                     }
                 };
 
-                // Check if repo already exists
                 const normalizedInput = normalizeUrl(value);
                 const isDuplicate = existingRepoUrls.some(existingUrl =>
                     normalizeUrl(existingUrl) === normalizedInput
                 );
-
-                if (isDuplicate) {
-                    return t("validation.repoAlreadyUsed");
-                }
+                if (isDuplicate) return t("validation.repoAlreadyUsed");
 
                 try {
                     const url = new URL(value);
-
                     if (url.hostname !== 'github.com' && url.hostname !== 'www.github.com') {
                         return t("validation.validGithubUrl");
                     }
-
                     const pathParts = url.pathname.split('/').filter(part => part.length > 0);
-
-                    if (pathParts.length < 2) {
-                        return t("validation.validRepoUrl");
-                    }
-
+                    if (pathParts.length < 2) return t("validation.validRepoUrl");
                     const [username, repo] = pathParts;
-                    if (!username || !repo) {
-                        return t("validation.validRepoUrl");
-                    }
-
+                    if (!username || !repo) return t("validation.validRepoUrl");
                     return null;
                 } catch {
                     return t("validation.validUrl");
                 }
             },
-            startDate: (value) => (!value ? t("validation.startDateRequired") : null),
+            startDate: (value) => {
+                if (!value) return t("validation.startDateRequired");
+                const now = dayjs().endOf('month');
+                if (dayjs(value, 'YYYY-MM').isAfter(now)) return t("validation.startDateFuture");
+                return null;
+            },
             endDate: (value, values) => {
                 if (!value) {
                     if (values.status === ProjectStatus.COMPLETED) {
@@ -141,7 +133,9 @@ export default function ProjectModal({
                     }
                     return null;
                 }
-                if (values.startDate && value < values.startDate) {
+                const now = dayjs().endOf('month');
+                if (dayjs(value, 'YYYY-MM').isAfter(now)) return t("validation.endDateFuture");
+                if (values.startDate && dayjs(value, 'YYYY-MM').isBefore(dayjs(values.startDate, 'YYYY-MM'))) {
                     return t("validation.endDateBeforeStart");
                 }
                 return null;
@@ -149,7 +143,14 @@ export default function ProjectModal({
         },
     });
 
-    // Sync the opened prop with internal state
+    useEffect(() => {
+        if (form.values.startDate && form.values.endDate) {
+            if (dayjs(form.values.endDate, 'YYYY-MM').isBefore(dayjs(form.values.startDate, 'YYYY-MM'))) {
+                form.setFieldValue('endDate', null);
+            }
+        }
+    }, [form.values.startDate]);
+
     useEffect(() => {
         setProjectModalOpened(opened);
     }, [opened]);
@@ -157,10 +158,9 @@ export default function ProjectModal({
     useEffect(() => {
         if (opened) {
             if (isUpdateMode && project) {
-                // Update mode: load project data
                 form.setValues({
                     title: project.title,
-                    description: project.description,
+                    description: project.description_en,
                     githubUrl: project.githubUrl,
                     startDate: project.startDate,
                     endDate: project.endDate,
@@ -170,7 +170,6 @@ export default function ProjectModal({
                 setSelectedSkills(project.skills?.map(s => s.name) || []);
                 setActiveStep(0);
             } else {
-                // Add mode: reset form
                 form.reset();
                 setActiveStep(0);
                 setDetectedLanguages([]);
@@ -190,9 +189,7 @@ export default function ProjectModal({
     };
 
     const fetchUserGithubRepos = async () => {
-        // Only fetch repos in add mode
         if (isUpdateMode) return;
-
         try {
             const contact = await getContact();
             if (!contact.github) return;
@@ -206,7 +203,6 @@ export default function ProjectModal({
 
             if (response.ok) {
                 const repos: GitHubRepo[] = await response.json();
-                // Filter out repos that are already used
                 const normalizeUrl = (url: string) => {
                     try {
                         const urlObj = new URL(url);
@@ -216,13 +212,11 @@ export default function ProjectModal({
                         return url.toLowerCase();
                     }
                 };
-
                 const availableRepos = repos.filter(repo =>
                     !existingRepoUrls.some(existingUrl =>
                         normalizeUrl(existingUrl) === normalizeUrl(repo.html_url)
                     )
                 );
-
                 setGithubRepos(availableRepos);
             }
         } catch (error) {
@@ -243,14 +237,11 @@ export default function ProjectModal({
         try {
             const urlObj = new URL(url);
             const pathParts = urlObj.pathname.split('/').filter(part => part.length > 0);
-
             if (pathParts.length < 2) return null;
 
             const [owner, repo] = pathParts;
             const repoName = repo.replace(/\.git$/, '');
-
             const response = await fetch(`https://api.github.com/repos/${owner}/${repoName}`);
-
             if (!response.ok) return null;
 
             const data = await response.json();
@@ -269,29 +260,18 @@ export default function ProjectModal({
         try {
             const urlObj = new URL(url);
             const pathParts = urlObj.pathname.split('/').filter(part => part.length > 0);
-
             if (pathParts.length < 2) return t("validation.invalidRepoUrl");
 
             const [owner, repo] = pathParts;
             const repoName = repo.replace(/\.git$/, '');
 
             setIsValidatingRepo(true);
-
             const response = await fetch(`https://api.github.com/repos/${owner}/${repoName}`);
-
             setIsValidatingRepo(false);
 
-            if (response.status === 404) {
-                return t("validation.repoNotFound");
-            }
-
-            if (response.status === 403) {
-                return t("validation.rateLimitExceeded");
-            }
-
-            if (!response.ok) {
-                return t("validation.unableToVerify");
-            }
+            if (response.status === 404) return t("validation.repoNotFound");
+            if (response.status === 403) return t("validation.rateLimitExceeded");
+            if (!response.ok) return t("validation.unableToVerify");
 
             return null;
         } catch (error) {
@@ -304,22 +284,16 @@ export default function ProjectModal({
         try {
             const urlObj = new URL(url);
             const pathParts = urlObj.pathname.split('/').filter(part => part.length > 0);
-
             if (pathParts.length < 2) return [];
 
             const [owner, repo] = pathParts;
             const repoName = repo.replace(/\.git$/, '');
 
             setIsLoadingLanguages(true);
-
             const response = await fetch(`https://api.github.com/repos/${owner}/${repoName}/languages`);
-
             setIsLoadingLanguages(false);
 
-            if (!response.ok) {
-                console.error("Failed to fetch languages");
-                return [];
-            }
+            if (!response.ok) return [];
 
             const languages = await response.json();
             return Object.keys(languages);
@@ -332,29 +306,20 @@ export default function ProjectModal({
 
     const handleNextStep = async () => {
         if (isUpdateMode) {
-            // Update mode flow (no repository step)
             if (activeStep === 0) {
                 const titleError = form.validateField('title');
                 const descError = form.validateField('description');
-
-                if (titleError.hasError || descError.hasError) {
-                    return;
-                }
-
+                if (titleError.hasError || descError.hasError) return;
                 setActiveStep(1);
             } else if (activeStep === 1) {
                 setActiveStep(2);
             }
         } else {
-            // Add mode flow (with repository step)
             if (activeStep === 0) {
                 const urlError = form.validateField('githubUrl');
-                if (urlError.hasError) {
-                    return;
-                }
+                if (urlError.hasError) return;
 
                 const repoError = await validateGitHubRepo(form.values.githubUrl);
-
                 if (repoError) {
                     form.setFieldError('githubUrl', repoError);
                     return;
@@ -371,10 +336,7 @@ export default function ProjectModal({
             } else if (activeStep === 1) {
                 const titleError = form.validateField('title');
                 const descError = form.validateField('description');
-
-                if (titleError.hasError || descError.hasError) {
-                    return;
-                }
+                if (titleError.hasError || descError.hasError) return;
 
                 const languages = await fetchRepositoryLanguages(form.values.githubUrl);
                 setDetectedLanguages(languages);
@@ -388,16 +350,27 @@ export default function ProjectModal({
     };
 
     const handlePrevStep = () => {
-        if (activeStep > 0) {
-            setActiveStep(activeStep - 1);
-        }
+        if (activeStep > 0) setActiveStep(activeStep - 1);
     };
 
-    const handleSubmit = async (values: typeof form.values) => {
-        await onSubmit({
-            ...values,
-            skills: selectedSkills,
+    const handleSubmit = async (values: ProjectFormValues) => {
+        const translated = await translateFields({
+            description: values.description,
         });
+
+        const projectData: ProjectRequestModel & { skills: string[] } = {
+            title: values.title,
+            description_en: translated.description_en as string,
+            description_fr: translated.description_fr as string,
+            githubUrl: values.githubUrl,
+            status: values.status,
+            active: values.active,
+            startDate: values.startDate,
+            endDate: values.endDate,
+            skills: selectedSkills,
+        };
+
+        await onSubmit(projectData);
         handleClose();
     };
 
@@ -411,13 +384,8 @@ export default function ProjectModal({
         onClose();
     };
 
-    const handleSkillAdd = (skill: string) => {
-        setSelectedSkills([...selectedSkills, skill]);
-    };
-
-    const handleSkillRemove = (skill: string) => {
-        setSelectedSkills(selectedSkills.filter(s => s !== skill));
-    };
+    const handleSkillAdd = (skill: string) => setSelectedSkills([...selectedSkills, skill]);
+    const handleSkillRemove = (skill: string) => setSelectedSkills(selectedSkills.filter(s => s !== skill));
 
     const handleOpenSkillModal = () => {
         setProjectModalOpened(false);
@@ -427,36 +395,27 @@ export default function ProjectModal({
     const handleCloseSkillModal = () => {
         setSkillModalOpened(false);
         setProjectModalOpened(true);
-        // Reload skills after creating a new one
         loadAvailableSkills();
     };
 
     const handleSkillSubmit = async (skillData: SkillRequestModel) => {
         try {
             setIsCreatingSkill(true);
-
-            // Create the skill using the addSkill function
             await addSkill(skillData);
-
-            // Reload available skills to include the newly created one
             await loadAvailableSkills();
-
-            // Add the newly created skill to selected skills
             if (skillData.name) {
                 setSelectedSkills([...selectedSkills, skillData.name]);
             }
-
             handleCloseSkillModal();
         } catch (error) {
             console.error("Failed to create skill:", error);
-            // You might want to show an error notification here
         } finally {
             setIsCreatingSkill(false);
         }
     };
 
-    // Determine the final step based on mode
     const finalStep = isUpdateMode ? 2 : 3;
+    const isBusy = isLoading || isTranslating;
 
     return (
         <>
@@ -466,24 +425,14 @@ export default function ProjectModal({
                 title={<Text fw={700} size="lg">{t("title")}</Text>}
                 size="xl"
                 centered
-                overlayProps={{
-                    backgroundOpacity: 0.55,
-                    blur: 3,
-                }}
+                overlayProps={{ backgroundOpacity: 0.55, blur: 3 }}
                 styles={{
-                    content: {
-                        backgroundColor: 'transparent',
-                    },
-                    header: {
-                        backgroundColor: 'transparent',
-                    },
-                    body: {
-                        padding: 0,
-                        overflow: 'hidden',
-                    },
+                    content: { backgroundColor: 'transparent' },
+                    header: { backgroundColor: 'transparent' },
+                    body: { padding: 0, overflow: 'hidden' },
                 }}
-                withCloseButton={!isLoading && !isValidatingRepo && !isLoadingLanguages}
-                closeOnEscape={!isLoading && !isValidatingRepo && !isLoadingLanguages}
+                withCloseButton={!isBusy && !isValidatingRepo && !isLoadingLanguages}
+                closeOnEscape={!isBusy && !isValidatingRepo && !isLoadingLanguages}
             >
                 <Box className={`glowWrapper ${theme}`}>
                     <Card className={`glassCard ${theme}`} p="xl" radius="md">
@@ -496,7 +445,7 @@ export default function ProjectModal({
                             <Stepper.Step label={t("steps.settings.label")} description={t("steps.settings.description")} />
                         </Stepper>
 
-                        <form onSubmit={form.onSubmit((values) => {
+                        <form onSubmit={form.onSubmit((values: ProjectFormValues) => {
                             if (activeStep === finalStep) {
                                 handleSubmit(values);
                             }
@@ -548,7 +497,7 @@ export default function ProjectModal({
                             {((isUpdateMode && activeStep === 2) || (!isUpdateMode && activeStep === 3)) && (
                                 <SettingsStep
                                     form={form}
-                                    isLoading={isLoading}
+                                    isLoading={isBusy}
                                     locale={locale}
                                     t={t}
                                     onBack={handlePrevStep}

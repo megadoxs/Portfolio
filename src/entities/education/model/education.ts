@@ -1,18 +1,22 @@
 export interface Education {
     id: string;
     institution: string;
-    degree: string | null;
-    fieldOfStudy: string | null;
+    degree_en: string | null;
+    degree_fr: string | null;
+    fieldOfStudy_en: string | null;
+    fieldOfStudy_fr: string | null;
     iconType: string;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
 }
 
 export interface EducationRequestModel {
     institution: string;
-    degree: string | null;
-    fieldOfStudy: string | null;
+    degree_en: string | null;
+    degree_fr: string | null;
+    fieldOfStudy_en: string | null;
+    fieldOfStudy_fr: string | null;
     iconType: string;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
 }

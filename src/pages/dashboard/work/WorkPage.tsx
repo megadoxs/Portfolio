@@ -108,7 +108,7 @@ export default function WorkPage() {
         <Container size="100%" py="xl" px="xl">
             <Stack gap="lg">
                 <Group justify="space-between" align="center">
-                    <Text size="xl" fw={800} c="gray.8">
+                    <Text size="xl" fw={800} style={{ color: colorScheme === 'dark' ? 'var(--mantine-color-white)' : 'var(--mantine-color-black)' }}>
                         {t("title")}
                     </Text>
                     <Button
@@ -130,16 +130,22 @@ export default function WorkPage() {
                         description={t("emptyDesc")}
                     />
                 ) : (
-                    <Stack gap="sm">
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(520px, 1fr))',
+                        gap: 'var(--mantine-spacing-lg)',
+                        width: '100%'
+                    }}>
                         {sortedWork.map((work) => (
-                            <WorkCard
-                                key={work.id}
-                                work={work}
-                                onDelete={setDeleteTarget}
-                                onUpdate={handleUpdate}
-                            />
+                            <div key={work.id}>
+                                <WorkCard
+                                    work={work}
+                                    onDelete={setDeleteTarget}
+                                    onUpdate={handleUpdate}
+                                />
+                            </div>
                         ))}
-                    </Stack>
+                    </div>
                 )}
             </Stack>
 

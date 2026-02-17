@@ -11,7 +11,8 @@ export async function addHobby(hobby: HobbyRequestModel) {
 
     await prisma.hobby.create({
         data: {
-            name: hobby.name,
+            name_fr: hobby.name_fr,
+            name_en: hobby.name_en,
             picture: blob.url,
         }
     });

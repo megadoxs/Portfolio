@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 import { HobbyRequestModel } from "@/entities/hobby";
 import { useMantineColorScheme } from "@mantine/core";
 import AvatarEditor from "react-avatar-editor";
+import {useTranslate} from "@/shared/lib/translate/useTranslate";
 
 interface HobbyModalProps {
     opened: boolean;
@@ -22,15 +23,14 @@ export default function HobbyModal({ opened, onClose, onSubmit, isLoading }: Hob
     const { colorScheme } = useMantineColorScheme();
     const theme = colorScheme === 'dark' ? 'dark' : 'light';
     const editorRef = useRef<AvatarEditor>(null);
+    const { translateFields, isTranslating } = useTranslate();
 
     const [file, setFile] = useState<File | null>(null);
     const [scale, setScale] = useState(1);
     const [rotate, setRotate] = useState(0);
 
     const form = useForm<{ name: string }>({
-        initialValues: {
-            name: "",
-        },
+        initialValues: { name: "" },
         validate: {
             name: (value: string) => (!value?.trim() ? t("nameRequired") : null),
         },
@@ -41,8 +41,14 @@ export default function HobbyModal({ opened, onClose, onSubmit, isLoading }: Hob
             const canvas = editorRef.current.getImageScaledToCanvas();
             canvas.toBlob(async (blob) => {
                 if (blob) {
+                    const translated = await translateFields({ name: values.name.trim() });
                     const croppedFile = new File([blob], file.name, { type: file.type });
-                    await onSubmit({ name: values.name.trim(), file: croppedFile });
+
+                    await onSubmit({
+                        name_en: translated.name_en as string,
+                        name_fr: translated.name_fr as string,
+                        file: croppedFile,
+                    });
                     handleClose();
                 }
             });
@@ -67,6 +73,8 @@ export default function HobbyModal({ opened, onClose, onSubmit, isLoading }: Hob
         setRotate((prev) => (prev + 90) % 360);
     };
 
+    const isBusy = isLoading || isTranslating;
+
     return (
         <Modal
             opened={opened}
@@ -74,21 +82,11 @@ export default function HobbyModal({ opened, onClose, onSubmit, isLoading }: Hob
             title={<Text fw={700} size="lg">{t("modalTitle")}</Text>}
             size="lg"
             centered
-            overlayProps={{
-                backgroundOpacity: 0.55,
-                blur: 3,
-            }}
+            overlayProps={{ backgroundOpacity: 0.55, blur: 3 }}
             styles={{
-                content: {
-                    backgroundColor: 'transparent',
-                },
-                header: {
-                    backgroundColor: 'transparent',
-                },
-                body: {
-                    padding: 0,
-                    overflow: 'hidden',
-                },
+                content: { backgroundColor: 'transparent' },
+                header: { backgroundColor: 'transparent' },
+                body: { padding: 0, overflow: 'hidden' },
             }}
         >
             <Box className={`glowWrapper ${theme}`}>
@@ -116,31 +114,17 @@ export default function HobbyModal({ opened, onClose, onSubmit, isLoading }: Hob
                                     >
                                         <Group justify="center" gap="xl" mih={120} style={{ pointerEvents: "none" }}>
                                             <Dropzone.Accept>
-                                                <IconFileUpload
-                                                    style={{ width: rem(52), height: rem(52), color: "var(--mantine-color-blue-6)" }}
-                                                    stroke={1.5}
-                                                />
+                                                <IconFileUpload style={{ width: rem(52), height: rem(52), color: "var(--mantine-color-blue-6)" }} stroke={1.5} />
                                             </Dropzone.Accept>
                                             <Dropzone.Reject>
-                                                <IconX
-                                                    style={{ width: rem(52), height: rem(52), color: "var(--mantine-color-red-6)" }}
-                                                    stroke={1.5}
-                                                />
+                                                <IconX style={{ width: rem(52), height: rem(52), color: "var(--mantine-color-red-6)" }} stroke={1.5} />
                                             </Dropzone.Reject>
                                             <Dropzone.Idle>
-                                                <IconPhoto
-                                                    style={{ width: rem(52), height: rem(52), color: "var(--mantine-color-dimmed)" }}
-                                                    stroke={1.5}
-                                                />
+                                                <IconPhoto style={{ width: rem(52), height: rem(52), color: "var(--mantine-color-dimmed)" }} stroke={1.5} />
                                             </Dropzone.Idle>
-
                                             <div>
-                                                <Text size="xl" inline>
-                                                    {t("dropzoneText")}
-                                                </Text>
-                                                <Text size="sm" c="dimmed" inline mt={7}>
-                                                    {t("dropzoneHint")}
-                                                </Text>
+                                                <Text size="xl" inline>{t("dropzoneText")}</Text>
+                                                <Text size="sm" c="dimmed" inline mt={7}>{t("dropzoneHint")}</Text>
                                             </div>
                                         </Group>
                                     </Dropzone>
@@ -159,17 +143,10 @@ export default function HobbyModal({ opened, onClose, onSubmit, isLoading }: Hob
                                                 rotate={rotate}
                                             />
                                         </Box>
-
                                         <Stack gap="xs">
                                             <Group justify="space-between">
-                                                <Text size="sm" fw={500}>
-                                                    {t("zoom") || "Zoom"}
-                                                </Text>
-                                                <ActionIcon
-                                                    variant="subtle"
-                                                    onClick={handleRotate}
-                                                    aria-label="Rotate"
-                                                >
+                                                <Text size="sm" fw={500}>{t("zoom") || "Zoom"}</Text>
+                                                <ActionIcon variant="subtle" onClick={handleRotate} aria-label="Rotate">
                                                     <IconRotateClockwise size={18} />
                                                 </ActionIcon>
                                             </Group>
@@ -187,13 +164,7 @@ export default function HobbyModal({ opened, onClose, onSubmit, isLoading }: Hob
                                                 ]}
                                             />
                                         </Stack>
-
-                                        <Button
-                                            variant="subtle"
-                                            size="xs"
-                                            onClick={() => setFile(null)}
-                                            fullWidth
-                                        >
+                                        <Button variant="subtle" size="xs" onClick={() => setFile(null)} fullWidth>
                                             {t("changeImage") || "Change image"}
                                         </Button>
                                     </Stack>
@@ -208,13 +179,13 @@ export default function HobbyModal({ opened, onClose, onSubmit, isLoading }: Hob
                             />
 
                             <Group justify="flex-end" mt="md">
-                                <Button variant="subtle" onClick={handleClose} disabled={isLoading}>
+                                <Button variant="subtle" onClick={handleClose} disabled={isBusy}>
                                     {t("cancelButton")}
                                 </Button>
                                 <Button
                                     type="submit"
                                     disabled={!form.values.name.trim() || !file}
-                                    loading={isLoading}
+                                    loading={isBusy}
                                 >
                                     {t("submitButton")}
                                 </Button>

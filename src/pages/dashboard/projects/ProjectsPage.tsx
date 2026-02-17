@@ -1,9 +1,9 @@
 "use client";
 
-import {Button, Container, Grid, Group, Loader, Stack, Text, useMantineColorScheme} from "@mantine/core";
+import {Button, Container, Group, Loader, Stack, Text, useMantineColorScheme} from "@mantine/core";
 import {useState, useEffect} from "react";
 import {useTranslations} from "next-intl";
-import {IconCode, IconPlus} from "@tabler/icons-react";
+import {IconPlus, IconTrophy} from "@tabler/icons-react";
 
 import ProjectCard from "@/shared/ui/ProjectCard";
 import ProjectModal from "./ui/ProjectModal";
@@ -120,7 +120,7 @@ export default function ProjectsPage() {
         <Container size="100%" py="xl" px="xl">
             <Stack gap="lg">
                 <Group justify="space-between" align="center">
-                    <Text size="xl" fw={800} c="gray.8">
+                    <Text size="xl" fw={800} style={{ color: colorScheme === 'dark' ? 'var(--mantine-color-white)' : 'var(--mantine-color-black)' }}>
                         {t("title")}
                     </Text>
                     <Button
@@ -137,22 +137,27 @@ export default function ProjectsPage() {
 
                 {projects.length === 0 ? (
                     <EmptyState
-                        icon={<IconCode size={48} />}
+                        icon={<IconTrophy size={48} />}
                         title={t("emptyTitle")}
                         description={t("emptyDesc")}
                     />
                 ) : (
-                    <Grid>
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
+                        gap: 'var(--mantine-spacing-lg)',
+                        width: '100%'
+                    }}>
                         {projects.map((project) => (
-                            <Grid.Col key={project.id} span={{ base: 12, sm: 6, md: 4 }}>
+                            <div key={project.id}>
                                 <ProjectCard
                                     project={project}
                                     onEdit={handleEdit}
                                     onDelete={setDeleteTarget}
                                 />
-                            </Grid.Col>
+                            </div>
                         ))}
-                    </Grid>
+                    </div>
                 )}
             </Stack>
 

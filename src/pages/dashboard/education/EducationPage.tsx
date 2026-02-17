@@ -1,6 +1,6 @@
 "use client";
 
-import {Button, Container, Grid, Loader, Stack, Text, Group, useMantineColorScheme} from "@mantine/core";
+import {Button, Container, Loader, Stack, Text, Group, useMantineColorScheme} from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { IconSchool, IconPlus } from "@tabler/icons-react";
@@ -98,7 +98,7 @@ export default function EducationPage() {
         <Container size="100%" py="xl" px="xl">
             <Stack gap="lg">
                 <Group justify="space-between" align="center">
-                    <Text size="xl" fw={800} c="gray.8">
+                    <Text size="xl" fw={800} style={{ color: colorScheme === 'dark' ? 'var(--mantine-color-white)' : 'var(--mantine-color-black)' }}>
                         {t("title")}
                     </Text>
                     <Button
@@ -120,17 +120,22 @@ export default function EducationPage() {
                         description={t("emptyDesc")}
                     />
                 ) : (
-                    <Grid>
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(450px, 1fr))',
+                        gap: 'var(--mantine-spacing-lg)',
+                        width: '100%'
+                    }}>
                         {educations.map((education) => (
-                            <Grid.Col key={education.id} span={{ base: 12, sm: 6, md: 4, lg: 3 }}>
+                            <div key={education.id}>
                                 <EducationCard
                                     education={education}
                                     onDelete={setDeleteTarget}
                                     onEdit={handleEdit}
                                 />
-                            </Grid.Col>
+                            </div>
                         ))}
-                    </Grid>
+                    </div>
                 )}
             </Stack>
 

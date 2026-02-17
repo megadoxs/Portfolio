@@ -1,7 +1,7 @@
 import { Button, Group, Stack, Text, Textarea, TextInput } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
 import { UseFormReturnType } from "@mantine/form";
-import { ProjectRequestModel } from "@/entities/project";
+import {ProjectFormValues} from "@/entities/project";
 
 interface GitHubRepoDetails {
     name: string;
@@ -10,7 +10,7 @@ interface GitHubRepoDetails {
 }
 
 interface DetailsStepProps {
-    form: UseFormReturnType<ProjectRequestModel & { active: boolean }>;
+    form: UseFormReturnType<ProjectFormValues & { active: boolean }>;
     repoDetails: GitHubRepoDetails | null;
     t: (key: string, values?: Record<string, string | number | Date>) => string;
     onNext: () => void;

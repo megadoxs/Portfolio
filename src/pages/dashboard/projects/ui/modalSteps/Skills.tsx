@@ -68,7 +68,7 @@ export default function SkillsStep({
 
     const getFilteredSkillOptions = () => {
         if (!skillSearchValue.trim()) {
-            return allSkillOptions.filter(skill => !selectedSkills.includes(skill.value));
+            return allSkillOptions.filter(skill => !selectedSkills.includes(skill.value)).slice(0, 5);
         }
 
         return allSkillOptions
@@ -76,7 +76,7 @@ export default function SkillsStep({
                 !selectedSkills.includes(skill.value) &&
                 skill.label.toLowerCase().includes(skillSearchValue.toLowerCase())
             )
-            .slice(0, 10);
+            .slice(0, 5);
     };
 
     const filteredSkillOptions = getFilteredSkillOptions();
@@ -97,6 +97,8 @@ export default function SkillsStep({
                 <Group gap="sm" wrap="nowrap">
                     <Combobox
                         store={skillCombobox}
+                        position="bottom-start"
+                        withinPortal={true}
                         onOptionSubmit={(value) => {
                             if (!selectedSkills.includes(value)) {
                                 onSkillAdd(value);

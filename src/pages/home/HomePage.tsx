@@ -11,12 +11,10 @@ import {
     Group,
     Button,
     useMantineColorScheme,
-    SimpleGrid,
     Paper,
     Textarea,
     TextInput,
     Alert,
-    Loader,
 } from "@mantine/core";
 import Image from "next/image";
 import { useTranslations, useLocale } from "next-intl";
@@ -51,10 +49,73 @@ import EducationCard from "@/shared/ui/EducationCard";
 import HobbyCard from "@/shared/ui/HobbyCard";
 import TestimonialCard from "@/shared/ui/TestimonialCard";
 import ProjectCard from "@/shared/ui/ProjectCard";
+import {sendContactEmail} from "@/features/email";
+
+function getPyramidRows<T>(items: T[], maxPerRow = 3): T[][] {
+    const rows: T[][] = [];
+    let remaining = [...items];
+
+    while (remaining.length > 0) {
+        const rowSize = Math.min(maxPerRow, remaining.length);
+        rows.push(remaining.slice(0, rowSize));
+        remaining = remaining.slice(rowSize);
+    }
+
+    return rows;
+}
+
+interface PyramidGridProps<T> {
+    items: T[];
+    maxPerRow?: number;
+    cardWidth?: number;
+    gap?: number;
+    renderItem: (item: T, index: number) => React.ReactNode;
+}
+
+function PyramidGrid<T>({
+                            items,
+                            maxPerRow = 3,
+                            cardWidth = 380,
+                            gap = 24,
+                            renderItem,
+                        }: PyramidGridProps<T>) {
+    const rows = getPyramidRows(items, maxPerRow);
+
+    return (
+        <Stack gap={gap} align="center" w="100%">
+            {rows.map((rowItems, rowIndex) => (
+                <div
+                    key={rowIndex}
+                    style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        justifyContent: "center",
+                        gap: `${gap}px`,
+                        width: "100%",
+                        maxWidth: `${rowItems.length * cardWidth + (rowItems.length - 1) * gap}px`,
+                    }}
+                >
+                    {rowItems.map((item, itemIndex) => (
+                        <div
+                            key={itemIndex}
+                            style={{
+                                flex: `1 1 ${cardWidth}px`,
+                                maxWidth: `${cardWidth}px`,
+                                minWidth: `${Math.min(cardWidth, 180)}px`,
+                                boxSizing: "border-box",
+                            }}
+                        >
+                            {renderItem(item, rowIndex * maxPerRow + itemIndex)}
+                        </div>
+                    ))}
+                </div>
+            ))}
+        </Stack>
+    );
+}
 
 export default function HomePage() {
     const t = useTranslations("home");
-    const tProjects = useTranslations("projects");
     const locale = useLocale();
     const { colorScheme } = useMantineColorScheme();
     const theme = colorScheme === "dark" ? "dark" : "light";
@@ -82,6 +143,9 @@ export default function HomePage() {
         email: "",
         message: "",
     });
+    const [contactSubmitting, setContactSubmitting] = useState(false);
+    const [contactSuccess, setContactSuccess] = useState(false);
+    const [contactError, setContactError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -129,9 +193,7 @@ export default function HomePage() {
     useEffect(() => {
         const hash = window.location.hash.substring(1);
         if (hash) {
-            // Try scrolling multiple times as content loads
             const scrollAttempts = [200, 400, 800, 1200, 1600];
-
             scrollAttempts.forEach(delay => {
                 setTimeout(() => {
                     const element = document.getElementById(hash);
@@ -140,8 +202,6 @@ export default function HomePage() {
                     }
                 }, delay);
             });
-
-            // Clean up hash after final attempt
             setTimeout(() => {
                 window.history.replaceState(null, '', window.location.pathname);
             }, 2000);
@@ -156,15 +216,10 @@ export default function HomePage() {
                 window.history.replaceState(null, '', window.location.pathname);
             }
         };
-
-        // Check on mount
         handleHashChange();
-
-        // Listen for hash changes
         window.addEventListener('hashchange', handleHashChange);
         return () => window.removeEventListener('hashchange', handleHashChange);
     }, []);
-
 
     const skillsByCategory = skills.reduce((acc, skill) => {
         if (!acc[skill.category]) {
@@ -181,7 +236,6 @@ export default function HomePage() {
         DATABASE: t("skills.database"),
     };
 
-    // Sort projects by start date (most recent first)
     const sortedProjects = [...projects].sort((a, b) => {
         return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
     });
@@ -202,11 +256,7 @@ export default function HomePage() {
             });
 
             if (!result.success) {
-                if (result.error === 'RATE_LIMIT_EXCEEDED') {
-                    setTestimonialError('RATE_LIMIT_EXCEEDED');
-                } else {
-                    setTestimonialError('SERVER_ERROR');
-                }
+                setTestimonialError(result.error ?? 'SERVER_ERROR');
                 return;
             }
 
@@ -225,8 +275,39 @@ export default function HomePage() {
     };
 
     const handleContactSubmit = async () => {
-        console.log("Contact form submitted:", contactForm);
-        setContactForm({ name: "", email: "", message: "" });
+        if (!contactForm.name.trim() || !contactForm.email.trim() || !contactForm.message.trim()) {
+            return;
+        }
+
+        setContactSubmitting(true);
+        setContactSuccess(false);
+        setContactError(null);
+
+        try {
+            const formData = new FormData();
+            formData.append("name", contactForm.name.trim());
+            formData.append("email", contactForm.email.trim());
+            formData.append("message", contactForm.message.trim());
+
+            const result = await sendContactEmail(formData);
+
+            if (!result.success) {
+                setContactError(result.error ?? 'SERVER_ERROR');
+                return;
+            }
+
+            setContactForm({ name: "", email: "", message: "" });
+            setContactSuccess(true);
+
+            setTimeout(() => {
+                setContactSuccess(false);
+            }, 5000);
+        } catch (error) {
+            console.error("Error sending contact message:", error);
+            setContactError('SERVER_ERROR');
+        } finally {
+            setContactSubmitting(false);
+        }
     };
 
     return (
@@ -242,7 +323,6 @@ export default function HomePage() {
                                         width: "100%",
                                         aspectRatio: "1/1",
                                         borderRadius: "16px",
-                                        overflow: "hidden",
                                     }}
                                 >
                                     <Image
@@ -264,6 +344,10 @@ export default function HomePage() {
 
                                 <Text size="xl" c="dimmed" fw={500}>
                                     {t("slogan")}
+                                </Text>
+
+                                <Text size="xl" c="dimmed" fw={500}>
+                                    {t("description")}
                                 </Text>
 
                                 <Group gap="md" mt="md">
@@ -315,6 +399,7 @@ export default function HomePage() {
                 </Container>
             </Box>
 
+            {/* ── Projects ── */}
             <Box py={60} id="projects">
                 <Container size="xl">
                     <Stack gap="xl" align="center">
@@ -331,7 +416,7 @@ export default function HomePage() {
                                         style={{ position: "relative", width: "100%", maxWidth: "1200px" }}
                                         visibleFrom="md"
                                     >
-                                        {/* Center Line - Glassmorphic gradient */}
+                                        {/* Center Line */}
                                         <Box
                                             style={{
                                                 position: "absolute",
@@ -346,7 +431,6 @@ export default function HomePage() {
                                             }}
                                         />
 
-                                        {/* Timeline Items */}
                                         <Stack gap={60}>
                                             {sortedProjects.map((project, index) => {
                                                 const isLeft = index % 2 === 0;
@@ -359,7 +443,7 @@ export default function HomePage() {
                                                             minHeight: "200px",
                                                         }}
                                                     >
-                                                        {/* Timeline Dot - Enhanced glow effect */}
+                                                        {/* Timeline Dot */}
                                                         <Box
                                                             style={{
                                                                 position: "absolute",
@@ -369,24 +453,16 @@ export default function HomePage() {
                                                                 zIndex: 2,
                                                             }}
                                                         >
-                                                            <Box
+                                                            <IconCircleFilled
+                                                                size={16}
                                                                 style={{
-                                                                    position: "relative",
-                                                                    width: "16px",
-                                                                    height: "16px",
+                                                                    color: "#8b5cf6",
+                                                                    filter: "drop-shadow(0 0 6px rgba(139, 92, 246, 0.6))",
                                                                 }}
-                                                            >
-                                                                <IconCircleFilled
-                                                                    size={16}
-                                                                    style={{
-                                                                        color: "#8b5cf6",
-                                                                        filter: "drop-shadow(0 0 6px rgba(139, 92, 246, 0.6))",
-                                                                    }}
-                                                                />
-                                                            </Box>
+                                                            />
                                                         </Box>
 
-                                                        {/* Horizontal Line to Card - Subtle gradient */}
+                                                        {/* Horizontal Line */}
                                                         <Box
                                                             style={{
                                                                 position: "absolute",
@@ -424,12 +500,11 @@ export default function HomePage() {
                                         </Stack>
                                     </Box>
 
-                                    {/* Timeline - Mobile (single column) */}
+                                    {/* Timeline - Mobile */}
                                     <Box
                                         style={{ position: "relative", width: "100%" }}
                                         hiddenFrom="md"
                                     >
-                                        {/* Left Line - Glassmorphic gradient */}
                                         <Box
                                             style={{
                                                 position: "absolute",
@@ -443,16 +518,9 @@ export default function HomePage() {
                                             }}
                                         />
 
-                                        {/* Timeline Items */}
                                         <Stack gap={40} pl="60px">
                                             {sortedProjects.map((project) => (
-                                                <Box
-                                                    key={project.id}
-                                                    style={{
-                                                        position: "relative",
-                                                    }}
-                                                >
-                                                    {/* Timeline Dot - Enhanced glow effect */}
+                                                <Box key={project.id} style={{ position: "relative" }}>
                                                     <Box
                                                         style={{
                                                             position: "absolute",
@@ -461,24 +529,14 @@ export default function HomePage() {
                                                             zIndex: 2,
                                                         }}
                                                     >
-                                                        <Box
+                                                        <IconCircleFilled
+                                                            size={16}
                                                             style={{
-                                                                position: "relative",
-                                                                width: "16px",
-                                                                height: "16px",
+                                                                color: "#8b5cf6",
+                                                                filter: "drop-shadow(0 0 6px rgba(139, 92, 246, 0.6))",
                                                             }}
-                                                        >
-                                                            <IconCircleFilled
-                                                                size={16}
-                                                                style={{
-                                                                    color: "#8b5cf6",
-                                                                    filter: "drop-shadow(0 0 6px rgba(139, 92, 246, 0.6))",
-                                                                }}
-                                                            />
-                                                        </Box>
+                                                        />
                                                     </Box>
-
-                                                    {/* Horizontal Line to Card - Subtle gradient */}
                                                     <Box
                                                         style={{
                                                             position: "absolute",
@@ -490,8 +548,6 @@ export default function HomePage() {
                                                             zIndex: 1,
                                                         }}
                                                     />
-
-                                                    {/* Project Card */}
                                                     <ProjectCard project={project} />
                                                 </Box>
                                             ))}
@@ -504,6 +560,7 @@ export default function HomePage() {
                 </Container>
             </Box>
 
+            {/* ── Skills ── */}
             <Box py={60} id="skills">
                 <Container size="xl">
                     <Stack gap="xl" align="center">
@@ -530,6 +587,7 @@ export default function HomePage() {
                 </Container>
             </Box>
 
+            {/* ── Work ── */}
             <Box py={60} id="work">
                 <Container size="xl">
                     <Stack gap="xl" align="center">
@@ -538,37 +596,18 @@ export default function HomePage() {
                             <Title order={2}>{t("sections.work")}</Title>
                         </Group>
 
-                        <Box w="100%" style={{ display: 'flex', justifyContent: 'center' }}>
-                            <Box style={{ width: '100%', maxWidth: '1200px' }}>
-                                {works.length === 1 ? (
-                                    <Group justify="center">
-                                        {works.map((work) => (
-                                            <Box key={work.id} style={{ width: '100%', maxWidth: '400px' }}>
-                                                <WorkCard work={work} />
-                                            </Box>
-                                        ))}
-                                    </Group>
-                                ) : works.length === 2 ? (
-                                    <Group justify="center" gap="lg">
-                                        {works.map((work) => (
-                                            <Box key={work.id} style={{ width: '100%', maxWidth: '400px' }}>
-                                                <WorkCard work={work} />
-                                            </Box>
-                                        ))}
-                                    </Group>
-                                ) : (
-                                    <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
-                                        {works.map((work) => (
-                                            <WorkCard key={work.id} work={work} />
-                                        ))}
-                                    </SimpleGrid>
-                                )}
-                            </Box>
-                        </Box>
+                        <PyramidGrid
+                            items={works}
+                            maxPerRow={3}
+                            cardWidth={520}
+                            gap={24}
+                            renderItem={(work) => <WorkCard work={work} />}
+                        />
                     </Stack>
                 </Container>
             </Box>
 
+            {/* ── Education ── */}
             <Box py={60} id="education">
                 <Container size="xl">
                     <Stack gap="xl" align="center">
@@ -577,37 +616,18 @@ export default function HomePage() {
                             <Title order={2}>{t("sections.education")}</Title>
                         </Group>
 
-                        <Box w="100%" style={{ display: 'flex', justifyContent: 'center' }}>
-                            <Box style={{ width: '100%', maxWidth: '1200px' }}>
-                                {educations.length === 1 ? (
-                                    <Group justify="center">
-                                        {educations.map((education) => (
-                                            <Box key={education.id} style={{ width: '100%', maxWidth: '400px' }}>
-                                                <EducationCard education={education} />
-                                            </Box>
-                                        ))}
-                                    </Group>
-                                ) : educations.length === 2 ? (
-                                    <Group justify="center" gap="lg">
-                                        {educations.map((education) => (
-                                            <Box key={education.id} style={{ width: '100%', maxWidth: '400px' }}>
-                                                <EducationCard education={education} />
-                                            </Box>
-                                        ))}
-                                    </Group>
-                                ) : (
-                                    <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
-                                        {educations.map((education) => (
-                                            <EducationCard key={education.id} education={education} />
-                                        ))}
-                                    </SimpleGrid>
-                                )}
-                            </Box>
-                        </Box>
+                        <PyramidGrid
+                            items={educations}
+                            maxPerRow={3}
+                            cardWidth={450}
+                            gap={24}
+                            renderItem={(education) => <EducationCard education={education} />}
+                        />
                     </Stack>
                 </Container>
             </Box>
 
+            {/* ── Hobbies ── */}
             <Box py={60} id="hobbies">
                 <Container size="xl">
                     <Stack gap="xl" align="center">
@@ -616,37 +636,18 @@ export default function HomePage() {
                             <Title order={2}>{t("sections.hobbies")}</Title>
                         </Group>
 
-                        <Box w="100%" style={{ display: 'flex', justifyContent: 'center' }}>
-                            <Box style={{ width: '100%', maxWidth: '600px' }}>
-                                {hobbies.length === 1 ? (
-                                    <Group justify="center">
-                                        {hobbies.map((hobby) => (
-                                            <Box key={hobby.id} style={{ width: '100%', maxWidth: '200px' }}>
-                                                <HobbyCard hobby={hobby} />
-                                            </Box>
-                                        ))}
-                                    </Group>
-                                ) : hobbies.length === 2 ? (
-                                    <Group justify="center" gap="lg">
-                                        {hobbies.map((hobby) => (
-                                            <Box key={hobby.id} style={{ width: '100%', maxWidth: '200px' }}>
-                                                <HobbyCard hobby={hobby} />
-                                            </Box>
-                                        ))}
-                                    </Group>
-                                ) : (
-                                    <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
-                                        {hobbies.map((hobby) => (
-                                            <HobbyCard key={hobby.id} hobby={hobby} />
-                                        ))}
-                                    </SimpleGrid>
-                                )}
-                            </Box>
-                        </Box>
+                        <PyramidGrid
+                            items={hobbies}
+                            maxPerRow={3}
+                            cardWidth={220}
+                            gap={24}
+                            renderItem={(hobby) => <HobbyCard hobby={hobby} />}
+                        />
                     </Stack>
                 </Container>
             </Box>
 
+            {/* ── Testimonials ── */}
             <Box py={60} id="testimonials">
                 <Container size="xl">
                     <Stack gap="xl" align="center">
@@ -656,35 +657,16 @@ export default function HomePage() {
                         </Group>
 
                         {testimonials.length > 0 && (
-                            <Box w="100%" style={{ display: 'flex', justifyContent: 'center' }}>
-                                <Box style={{ width: '100%', maxWidth: '1200px' }}>
-                                    {testimonials.length === 1 ? (
-                                        <Group justify="center">
-                                            {testimonials.map((testimonial) => (
-                                                <Box key={testimonial.id} style={{ width: '100%', maxWidth: '400px' }}>
-                                                    <TestimonialCard testimonial={testimonial} />
-                                                </Box>
-                                            ))}
-                                        </Group>
-                                    ) : testimonials.length === 2 ? (
-                                        <Group justify="center" gap="lg">
-                                            {testimonials.map((testimonial) => (
-                                                <Box key={testimonial.id} style={{ width: '100%', maxWidth: '400px' }}>
-                                                    <TestimonialCard testimonial={testimonial} />
-                                                </Box>
-                                            ))}
-                                        </Group>
-                                    ) : (
-                                        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
-                                            {testimonials.map((testimonial) => (
-                                                <TestimonialCard key={testimonial.id} testimonial={testimonial} />
-                                            ))}
-                                        </SimpleGrid>
-                                    )}
-                                </Box>
-                            </Box>
+                            <PyramidGrid
+                                items={testimonials}
+                                maxPerRow={3}
+                                cardWidth={380}
+                                gap={24}
+                                renderItem={(testimonial) => <TestimonialCard testimonial={testimonial} />}
+                            />
                         )}
 
+                        {/* Leave a Testimonial Form */}
                         <Box w="100%" maw={700} mt="xl">
                             <Box className={`glowWrapper ${theme}`}>
                                 <Paper className={`glassCard ${theme}`} p="xl" radius="md">
@@ -800,6 +782,7 @@ export default function HomePage() {
                 </Container>
             </Box>
 
+            {/* ── Contact ── */}
             <Box py={60} id="contact">
                 <Container size="xl">
                     <Stack gap="xl" align="center">
@@ -816,6 +799,35 @@ export default function HomePage() {
                             <Box className={`glowWrapper ${theme}`}>
                                 <Paper className={`glassCard ${theme}`} p="xl" radius="md">
                                     <Stack gap="lg">
+                                        {contactSuccess && (
+                                            <Alert
+                                                icon={<IconCheck size={20} />}
+                                                title={t("form.success")}
+                                                color="green"
+                                                variant="light"
+                                            >
+                                                {t("form.contactSuccess")}
+                                            </Alert>
+                                        )}
+
+                                        {contactError && (
+                                            <Alert
+                                                icon={<IconAlertCircle size={20} />}
+                                                title={t("form.error")}
+                                                color="red"
+                                                variant="light"
+                                            >
+                                                {contactError === 'RATE_LIMIT_EXCEEDED'
+                                                    ? t("form.rateLimitExceeded")
+                                                    : contactError === 'INVALID_EMAIL'
+                                                        ? t("form.invalidEmail")
+                                                        : contactError === 'INVALID_MESSAGE_LENGTH'
+                                                            ? t("form.invalidMessageLength")
+                                                            : t("form.serverError")
+                                                }
+                                            </Alert>
+                                        )}
+
                                         <Group gap="md" grow>
                                             <TextInput
                                                 label={t("form.name")}
@@ -826,6 +838,7 @@ export default function HomePage() {
                                                 }
                                                 size="md"
                                                 required
+                                                disabled={contactSubmitting}
                                             />
                                             <TextInput
                                                 label={t("form.email")}
@@ -837,29 +850,60 @@ export default function HomePage() {
                                                 }
                                                 size="md"
                                                 required
+                                                disabled={contactSubmitting}
                                             />
                                         </Group>
-                                        <Textarea
-                                            label={t("form.message")}
-                                            placeholder={t("form.messagePlaceholder")}
-                                            value={contactForm.message}
-                                            onChange={(e) =>
-                                                setContactForm({
-                                                    ...contactForm,
-                                                    message: e.target.value,
-                                                })
-                                            }
-                                            minRows={4}
-                                            autosize
-                                            size="md"
-                                            required
-                                        />
+                                        <Box>
+                                            <Group justify="space-between" mb={5}>
+                                                <Text component="label" size="sm" fw={500}>
+                                                    {t("form.message")}
+                                                </Text>
+                                                <Text
+                                                    size="xs"
+                                                    c={
+                                                        contactForm.message.length > 1000
+                                                            ? "red"
+                                                            : contactForm.message.length < 100
+                                                                ? "orange"
+                                                                : "dimmed"
+                                                    }
+                                                >
+                                                    {contactForm.message.length < 100
+                                                        ? `${contactForm.message.length}/100 min`
+                                                        : `${contactForm.message.length}/1000`
+                                                    }
+                                                </Text>
+                                            </Group>
+                                            <Textarea
+                                                placeholder={t("form.messagePlaceholder")}
+                                                value={contactForm.message}
+                                                onChange={(e) =>
+                                                    setContactForm({
+                                                        ...contactForm,
+                                                        message: e.target.value,
+                                                    })
+                                                }
+                                                minRows={4}
+                                                autosize
+                                                size="md"
+                                                required
+                                                disabled={contactSubmitting}
+                                                error={contactForm.message.length > 1000 ? t("form.messageTooLong") : undefined}
+                                            />
+                                        </Box>
                                         <Button
                                             leftSection={<IconSend size={20} />}
                                             onClick={handleContactSubmit}
                                             size="lg"
                                             fullWidth
                                             mt="sm"
+                                            loading={contactSubmitting}
+                                            disabled={
+                                                !contactForm.name.trim() ||
+                                                !contactForm.email.trim() ||
+                                                contactForm.message.trim().length < 20 ||
+                                                contactForm.message.trim().length > 1000
+                                            }
                                         >
                                             {t("form.sendMessage")}
                                         </Button>

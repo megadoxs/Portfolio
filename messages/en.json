@@ -23,6 +23,7 @@
   "home": {
     "title": "Full Stack Developer",
     "slogan": "Building quality software that lasts.",
+    "description": "Full-stack developer with 3+ years of experience building \nweb platforms and collaborating on large-scale projects, including Visual Impact and Champlain Pet Clinic. Skilled in team-based development, with strong attention to detail and adaptability in high-pressure environments.",
     "buttons": {
       "github": "GitHub",
       "linkedin": "LinkedIn",
@@ -53,6 +54,7 @@
       "emailPlaceholder": "john@example.com",
       "message": "Message",
       "messagePlaceholder": "Tell me about your project...",
+      "messageTooLong": "Message is too long (max 1000 characters)",
       "testimonial": "Your Testimonial",
       "testimonialPlaceholder": "Share your experience working with me...",
       "testimonialTooLong": "Testimonial must be 512 characters or less",
@@ -60,8 +62,11 @@
       "sendMessage": "Send Message",
       "success": "Success",
       "error": "Error",
+      "contactSuccess": "Thank you for your message! I'll get back to you soon.",
       "testimonialSuccess": "Thank you! Your testimonial has been submitted and is pending approval.",
-      "rateLimitExceeded": "You have submitted too many testimonials. Please try again in an hour.",
+      "invalidEmail": "Please enter a valid email address.",
+      "invalidMessageLength": "Message must be between 100 and 1000 characters.",
+      "rateLimitExceeded": "Too many messages sent. Please try again in an hour.",
       "serverError": "An error occurred. Please try again later."
     }
   },
@@ -159,7 +164,12 @@
       "github": "View on GitHub",
       "details": "View Details",
       "description": "Description",
-      "viewAll": "View All Skills"
+      "viewAll": "View All Skills",
+      "status": {
+        "ACTIVE": "Active",
+        "INACTIVE": "Inactive",
+        "COMPLETED": "Completed"
+      }
     },
     "addProjectModal": {
       "title": "New Project",

@@ -23,6 +23,7 @@
   "home": {
     "title": "Développeur Full Stack",
     "slogan": "Créer des logiciels de qualité qui durent.",
+    "description": "Développeur full-stack avec plus de 3 ans d’expérience \ndans la création de plateformes web et la collaboration sur \ndes projets à grande échelle, notamment Visual Impact et \nChamplain Pet Clinic. Grande attention aux détails et \nexcellente adaptation en environnement exigeant.",
     "buttons": {
       "github": "GitHub",
       "linkedin": "LinkedIn",
@@ -53,6 +54,7 @@
       "emailPlaceholder": "jean@exemple.com",
       "message": "Message",
       "messagePlaceholder": "Parlez-moi de votre projet...",
+      "messageTooLong": "Message trop long (max 1000 caractères)",
       "testimonial": "Votre Témoignage",
       "testimonialPlaceholder": "Partagez votre expérience de travail avec moi...",
       "testimonialTooLong": "Le témoignage doit contenir 512 caractères ou moins",
@@ -60,8 +62,11 @@
       "sendMessage": "Envoyer le Message",
       "success": "Succès",
       "error": "Erreur",
+      "contactSuccess": "Merci pour votre message ! Je vous répondrai bientôt.",
       "testimonialSuccess": "Merci ! Votre témoignage a été soumis et est en attente d'approbation.",
-      "rateLimitExceeded": "Vous avez soumis trop de témoignages. Veuillez réessayer dans une heure.",
+      "invalidEmail": "Veuillez entrer une adresse courriel valide.",
+      "invalidMessageLength": "Le message doit contenir entre 100 et 1000 caractères.",
+      "rateLimitExceeded": "Trop de messages envoyés. Veuillez réessayer dans une heure.",
       "serverError": "Une erreur s'est produite. Veuillez réessayer plus tard."
     }
   },
@@ -159,7 +164,12 @@
       "github": "Voir sur GitHub",
       "details": "Voir en Détails",
       "description": "Description",
-      "viewAll": "Voir toutes les compétences"
+      "viewAll": "Voir toutes les compétences",
+      "status": {
+        "ACTIVE": "Actif",
+        "INACTIVE": "Inactif",
+        "COMPLETED": "Terminé"
+      }
     },
     "addProjectModal": {
       "title": "Nouveau projet",

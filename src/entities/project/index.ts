@@ -1,4 +1,4 @@
-export type { Project, ProjectRequestModel, ProjectWithSkills } from './model/project'
+export type { Project, ProjectRequestModel, ProjectWithSkills, ProjectFormValues } from './model/project'
 export { ProjectStatus } from './model/project'
 export { getAllProjects } from './api/getAllProjects'
 export { getProject } from './api/getProject'

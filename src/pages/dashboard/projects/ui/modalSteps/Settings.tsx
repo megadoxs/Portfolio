@@ -1,11 +1,13 @@
 import { Button, Group, Select, Stack, Switch } from "@mantine/core";
-import { DateInput } from "@mantine/dates";
+import { MonthPickerInput } from "@mantine/dates";
 import { IconCalendar } from "@tabler/icons-react";
 import { UseFormReturnType } from "@mantine/form";
-import { ProjectRequestModel, ProjectStatus } from "@/entities/project";
+import {ProjectFormValues, ProjectStatus} from "@/entities/project";
+import dayjs from "dayjs";
+import { useEffect } from "react";
 
 interface SettingsStepProps {
-    form: UseFormReturnType<ProjectRequestModel & { active: boolean }>;
+    form: UseFormReturnType<ProjectFormValues & { active: boolean }>;
     isLoading: boolean;
     locale: string;
     t: (key: string) => string;
@@ -13,6 +15,12 @@ interface SettingsStepProps {
     onCancel: () => void;
     onSubmit: () => void;
 }
+
+const stringToDate = (dateString: string | null | undefined): Date | null => {
+    if (!dateString || dateString === "") return null;
+    const parsed = dayjs(dateString, 'YYYY-MM');
+    return parsed.isValid() ? parsed.toDate() : null;
+};
 
 export default function SettingsStep({
                                          form,
@@ -29,26 +37,56 @@ export default function SettingsStep({
         { value: ProjectStatus.COMPLETED, label: t("status.completed") },
     ];
 
-    const dateFormat = locale === 'fr' ? 'D MMMM YYYY' : 'MMMM D, YYYY';
+    const dateFormat = locale === 'fr' ? 'MMMM YYYY' : 'MMMM YYYY';
+
+    useEffect(() => {
+        if (form.values.startDate && form.values.endDate) {
+            if (dayjs(form.values.endDate, 'YYYY-MM').isBefore(dayjs(form.values.startDate, 'YYYY-MM'))) {
+                form.setFieldValue('endDate', null);
+            }
+        }
+    }, [form.values.startDate]);
+
+    useEffect(() => {
+        if (form.values.status !== ProjectStatus.COMPLETED) {
+            if (form.values.endDate) {
+                form.setFieldValue('endDate', null);
+            }
+        }
+    }, [form.values.status]);
+
+    const startDateValue = stringToDate(form.values.startDate);
+    const endDateValue = stringToDate(form.values.endDate);
+    const minEndDate: Date | undefined = startDateValue ? startDateValue : undefined;
 
     return (
         <Stack gap="md">
             <Group grow gap="md">
-                <DateInput
+                <MonthPickerInput
                     label={t("fields.startDate.label")}
                     placeholder={t("fields.startDate.placeholder")}
                     radius="xl"
                     valueFormat={dateFormat}
                     leftSection={<IconCalendar size={16} stroke={1.5} />}
                     leftSectionPointerEvents="none"
-                    {...form.getInputProps("startDate")}
+                    value={startDateValue}
+                    onChange={(date) => {
+                        if (date) {
+                            form.setFieldValue('startDate', dayjs(date).format('YYYY-MM'));
+                        } else {
+                            form.setFieldValue('startDate', '');
+                        }
+                    }}
+                    error={form.errors.startDate}
                     styles={{
                         input: { border: "1px solid var(--mantine-color-gray-3)" },
                     }}
                     locale={locale}
+                    maxDate={dayjs().endOf('month').toDate()}
+                    required
                 />
 
-                <DateInput
+                <MonthPickerInput
                     label={t("fields.endDate.label")}
                     placeholder={form.values.status === ProjectStatus.COMPLETED ? t("fields.endDate.placeholderCompleted") : t("fields.endDate.placeholder")}
                     radius="xl"
@@ -56,11 +94,23 @@ export default function SettingsStep({
                     clearable
                     leftSection={<IconCalendar size={16} stroke={1.5} />}
                     leftSectionPointerEvents="none"
-                    {...form.getInputProps("endDate")}
+                    value={endDateValue}
+                    onChange={(date) => {
+                        if (date) {
+                            form.setFieldValue('endDate', dayjs(date).format('YYYY-MM'));
+                        } else {
+                            form.setFieldValue('endDate', null);
+                        }
+                    }}
+                    error={form.errors.endDate}
                     styles={{
                         input: { border: "1px solid var(--mantine-color-gray-3)" },
                     }}
                     locale={locale}
+                    minDate={minEndDate}
+                    maxDate={dayjs().endOf('month').toDate()}
+                    disabled={form.values.status !== ProjectStatus.COMPLETED}
+                    required={form.values.status === ProjectStatus.COMPLETED}
                 />
             </Group>
 
@@ -68,11 +118,19 @@ export default function SettingsStep({
                 label={t("fields.status.label")}
                 placeholder={t("fields.status.placeholder")}
                 data={statusOptions}
-                {...form.getInputProps("status")}
+                value={form.values.status}
+                onChange={(value) => {
+                    if (value) {
+                        form.setFieldValue('status', value as ProjectStatus);
+                    }
+                }}
+                error={form.errors.status}
                 radius="xl"
                 styles={{
                     input: { border: "1px solid var(--mantine-color-gray-3)" },
                 }}
+                allowDeselect={false}
+                required
             />
 
             <Switch

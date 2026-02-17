@@ -19,16 +19,14 @@ import {
     IconMessage,
     IconFileText,
     IconLogout,
-    IconSettings,
-    IconUser,
     IconDots,
     IconMail,
     IconChartBar
 } from "@tabler/icons-react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { useTranslations } from "next-intl";
+import {Link} from "@/shared/lib/i18n/navigation";
 
 export default function Sidebar() {
     const pathname = usePathname();
@@ -37,21 +35,22 @@ export default function Sidebar() {
     const { colorScheme } = useMantineColorScheme();
 
     const navItems = [
-        { href: "/dashboard", label: t("overview"), icon: IconChartBar },
-        { href: "/dashboard/education", label: t("education"), icon: IconSchool },
-        { href: "/dashboard/work", label: t("work"), icon: IconBriefcase },
-        { href: "/dashboard/projects", label: t("projects"), icon: IconTrophy },
-        { href: "/dashboard/skills", label: t("skills"), icon: IconCode },
-        { href: "/dashboard/hobbies", label: t("hobbies"), icon: IconHeart },
-        { href: "/dashboard/testimonials", label: t("testimonials"), icon: IconMessage },
-        { href: "/dashboard/resume", label: t("resume"), icon: IconFileText },
-        { href: "/dashboard/contact", label: t("contact"), icon: IconMail }
+        { href: "/dashboard" as const, label: t("overview"), icon: IconChartBar },
+        { href: "/dashboard/education" as const, label: t("education"), icon: IconSchool },
+        { href: "/dashboard/work" as const, label: t("work"), icon: IconBriefcase },
+        { href: "/dashboard/projects" as const, label: t("projects"), icon: IconTrophy },
+        { href: "/dashboard/skills" as const, label: t("skills"), icon: IconCode },
+        { href: "/dashboard/hobbies" as const, label: t("hobbies"), icon: IconHeart },
+        { href: "/dashboard/testimonials" as const, label: t("testimonials"), icon: IconMessage },
+        { href: "/dashboard/resume" as const, label: t("resume"), icon: IconFileText },
+        { href: "/dashboard/contact" as const, label: t("contact"), icon: IconMail },
     ];
 
     const NAVBAR_HEIGHT = 73;
 
     return (
         <Box
+            visibleFrom="sm"
             style={{
                 width: 280,
                 height: `calc(100vh - ${NAVBAR_HEIGHT}px)`,
