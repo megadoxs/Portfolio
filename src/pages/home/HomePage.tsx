@@ -597,8 +597,16 @@ export default function HomePage() {
                         </Group>
 
                         <PyramidGrid
-                            items={works}
-                            maxPerRow={3}
+                            items={[...works].sort((a, b) => {
+                                const aEnd = a.endDate ? new Date(a.endDate).getTime() : null;
+                                const bEnd = b.endDate ? new Date(b.endDate).getTime() : null;
+
+                                if (aEnd !== null && bEnd !== null) return bEnd - aEnd;
+                                if (aEnd === null && bEnd !== null) return -1;
+                                if (aEnd !== null && bEnd === null) return 1;
+                                return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+                            })}
+                            maxPerRow={2}
                             cardWidth={520}
                             gap={24}
                             renderItem={(work) => <WorkCard work={work} />}
